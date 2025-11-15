@@ -435,23 +435,45 @@ Simulator::Instruction Simulator::simCommit(Instruction inst, REGS &regData) {
 // You may find it useful to call functional simulation functions above
 
 Simulator::Instruction Simulator::simIF(uint64_t PC) {
-    throw std::runtime_error("simIF not implemented yet"); // TODO implement IF 
+    // Fetch instruction from mem
+    Instruction inst = simFetch(PC, memory);
+    return inst;
 }
 
 Simulator::Instruction Simulator::simID(Simulator::Instruction inst) {
-    throw std::runtime_error("simID not implemented yet"); // TODO implement ID
+    // Decode instruction (fills in corresponding bits)
+    inst = simDecode(inst);
+    return inst;
 }
 
 Simulator::Instruction Simulator::simEX(Simulator::Instruction inst) {
-    throw std::runtime_error("simEX not implemented yet"); // TODO implement EX
+    // Read rs1, rs2
+    inst = simOperandCollection(inst, regData);
+    inst = simNextPCResolution(inst);
+
+    // Perform ALU operation
+    if (inst.doesArithLogic) {
+        inst = simArithLogic(inst);
+    }
+
+    return inst;
 }
 
 Simulator::Instruction Simulator::simMEM(Simulator::Instruction inst) {
-    throw std::runtime_error("simMEM not implemented yet"); // TODO implement MEM
+    // Loads/ Stores
+    if (inst.readsMem || inst.writesMem) {
+        inst = simAddrGen(inst);
+        inst = simMemAccess(inst, memory);
+    }
+
+    return inst;
 }
 
 Simulator::Instruction Simulator::simWB(Simulator::Instruction inst) {
-    throw std::runtime_error("simWB not implemented yet"); // TODO implement WB
+    if (inst.writesRd) {
+        inst = simCommit(inst, regData);
+    }
+    return inst;
 }
 
 
