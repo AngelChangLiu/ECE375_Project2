@@ -67,33 +67,81 @@ Status runCycles(uint64_t cycles) {
         count++;
         cycleCount++;
     
-        pipelineInfo.wbInst = nop(BUBBLE);
+        // WB stage
         pipelineInfo.wbInst = simulator->simWB(pipelineInfo.memInst);
-        pipelineInfo.memInst = simulator->simMEM(pipelineInfo.exInst);
-        pipelineInfo.exInst = simulator->simEX(pipelineInfo.idInst);
-        pipelineInfo.idInst = simulator->simID(pipelineInfo.ifInst);
-        pipelineInfo.ifInst = simulator->simIF(PC);
 
-        // WB Check for halt instruction
+        // Halt Check
         if (pipelineInfo.wbInst.isHalt) {
-            status = HALT;
+            pipeState.ifPC = pipelineInfo.ifInst.PC;
+            pipeState.ifStatus = pipelineInfo.ifInst.status;
+            pipeState.idInstr = pipelineInfo.idInst.instruction;
+            pipeState.idStatus = pipelineInfo.idInst.status;
+            pipeState.exInstr = pipelineInfo.exInst.instruction;
+            pipeState.exStatus = pipelineInfo.exInst.status;
+            pipeState.memInstr = pipelineInfo.memInst.instruction;
+            pipeState.memStatus = pipelineInfo.memInst.status;
+            pipeState.wbInstr = pipelineInfo.wbInst.instruction;
+            pipeState.wbStatus = pipelineInfo.wbInst.status;
+            dumpPipeState(pipeState, output);
+            return HALT;
             break;
         }
-    }
 
-    
-    pipeState.ifPC = pipelineInfo.ifInst.PC;
-    pipeState.ifStatus = pipelineInfo.ifInst.status;
-    pipeState.idInstr = pipelineInfo.idInst.instruction;
-    pipeState.idStatus = pipelineInfo.idInst.status;
-    pipeState.exInstr = pipelineInfo.exInst.instruction;
-    pipeState.exStatus = pipelineInfo.exInst.status;
-    pipeState.memInstr = pipelineInfo.memInst.instruction;
-    pipeState.memStatus = pipelineInfo.memInst.status;
-    pipeState.wbInstr = pipelineInfo.wbInst.instruction;
-    pipeState.wbStatus = pipelineInfo.wbInst.status;
-    dumpPipeState(pipeState, output);
-    return status;
+        // MEM stage
+        pipelineInfo.memInst = simulator->simMEM(pipelineInfo.exInst);
+
+        // EX stage
+        pipelineInfo.exInst = simulator->simEX(pipelineInfo.idInst);
+
+        // ID stage
+        pipelineInfo.idInst = simulator->simID(pipelineInfo.ifInst);
+
+        // Branch Handling
+        bool isBranchJump = (pipelineInfo.idInst.opcode == OP_JALR ||
+                                 pipelineInfo.idInst.opcode == OP_BRANCH ||
+                                 pipelineInfo.idInst.opcode == OP_JAL);
+
+        bool taken = false;
+
+            // check if branch/jump is taken or not
+        if (isBranchJump && pipelineInfo.idInst.isLegal 
+            && !pipelineInfo.idInst.isNop && pipelineInfo.idInst.status != BUBBLE) {
+
+                if (pipelineInfo.idInst.nextPC != pipelineInfo.ifInst.PC + 4) {
+                    taken = true;
+                }
+        }
+
+            // taken condition handling
+        if (taken) {
+            pipelineInfo.ifInst.status = SQUASHED;
+            PC = pipelineInfo.idInst.nextPC;
+            pipelineInfo.ifInst = simulator->simIF(PC);
+            PC += 4;
+        }
+            // untaken condition handling
+        else {
+            pipelineInfo.ifInst = simulator->simIF(PC);
+            PC += 4;
+        }
+
+        // Dump pipe state
+        pipeState.ifPC = pipelineInfo.ifInst.PC;
+        pipeState.ifStatus = pipelineInfo.ifInst.status;
+        pipeState.idInstr = pipelineInfo.idInst.instruction;
+        pipeState.idStatus = pipelineInfo.idInst.status;
+        pipeState.exInstr = pipelineInfo.exInst.instruction;
+        pipeState.exStatus = pipelineInfo.exInst.status;
+        pipeState.memInstr = pipelineInfo.memInst.instruction;
+        pipeState.memStatus = pipelineInfo.memInst.status;
+        pipeState.wbInstr = pipelineInfo.wbInst.instruction;
+        pipeState.wbStatus = pipelineInfo.wbInst.status;
+
+        if (status != HALT) {
+            status = dumpPipeState(pipeState, output);
+        }
+
+        return status;
 }
 
 // run till halt (call runCycles() with cycles == 1 each time) until
