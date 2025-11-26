@@ -469,6 +469,10 @@ Simulator::Instruction Simulator::simEX(Simulator::Instruction inst) {
         return inst;
     }
 
+    if (inst.isHalt || !inst.isLegal) {
+        return inst;
+    }
+
     if (inst.doesArithLogic) {
         inst = simArithLogic(inst);
     }
