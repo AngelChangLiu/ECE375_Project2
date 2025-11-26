@@ -435,23 +435,86 @@ Simulator::Instruction Simulator::simCommit(Instruction inst, REGS &regData) {
 // You may find it useful to call functional simulation functions above
 
 Simulator::Instruction Simulator::simIF(uint64_t PC) {
-    throw std::runtime_error("simIF not implemented yet"); // TODO implement IF 
+    Instruction inst = simFetch(PC, memory);
+    inst.status = NORMAL;
+
+    return inst;
 }
 
 Simulator::Instruction Simulator::simID(Simulator::Instruction inst) {
-    throw std::runtime_error("simID not implemented yet"); // TODO implement ID
+
+    if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
+        inst.status = NORMAL;
+        return inst;
+    }
+
+    inst = simDecode(inst);
+
+    if (inst.isHalt || !inst.isLegal) {
+        return inst;
+    }
+
+    inst = simOperandCollection(inst, regData);
+    inst = simNextPCResolution(inst);
+
+    inst.instructionID = din++;
+    inst.status = NORMAL;
+
+    return inst;
 }
 
 Simulator::Instruction Simulator::simEX(Simulator::Instruction inst) {
-    throw std::runtime_error("simEX not implemented yet"); // TODO implement EX
+    if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
+        inst.status = NORMAL;
+        return inst;
+    }
+
+    if (inst.doesArithLogic) {
+        inst = simArithLogic(inst);
+    }
+
+    if (inst.readsMem || inst.writesMem) {
+        inst = simAddrGen(inst);
+    }
+
+    inst.status = NORMAL;
+    return inst;
 }
 
 Simulator::Instruction Simulator::simMEM(Simulator::Instruction inst) {
-    throw std::runtime_error("simMEM not implemented yet"); // TODO implement MEM
+    if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
+        inst.status = NORMAL;
+        return inst;
+    }
+
+    if (inst.isHalt || !inst.isLegal) {
+        return inst;
+    }
+
+    if (inst.readsMem || inst.writesMem) {
+        inst = simMemAccess(inst, memory);
+    }
+
+    inst.status = NORMAL;
+    return inst;
 }
 
 Simulator::Instruction Simulator::simWB(Simulator::Instruction inst) {
-    throw std::runtime_error("simWB not implemented yet"); // TODO implement WB
+    if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
+        inst.status = NORMAL;
+        return inst;
+    }
+
+    if (inst.isHalt || !inst.isLegal) {
+        return inst;
+    }
+
+    if (inst.writesRd) {
+        inst = simCommit(inst, regData);
+    }
+
+    inst.status = NORMAL;
+    return inst;
 }
 
 
