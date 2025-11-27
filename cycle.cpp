@@ -49,6 +49,33 @@ Status initSimulator(CacheConfig& iCacheConfig, CacheConfig& dCacheConfig, Memor
     return SUCCESS;
 }
 
+// return true if the instruction is a memory access
+static bool isLoad(const Simulator::Instruction& inst) {
+    return inst.readsMem && inst.isLegal && !inst.isNop 
+            && inst.status != BUBBLE && inst.status != SQUASHED;
+}
+
+// return true if the instruction is a memory access
+static bool isStore(const Simulator::Instruction& inst) {
+    return inst.writesMem && inst.isLegal && !inst.isNop 
+           && inst.status != BUBBLE && inst.status != SQUASHED;
+}
+
+// return true if the instruction writes to a register
+static bool writesREG(const Simulator::Instruction& inst) {
+    return inst.writesRd && inst.rd != 0 &&inst.isLegal && !inst.isNop 
+           && inst.status != BUBBLE && inst.status != SQUASHED;
+}
+
+static bool isBranchOrJump(const Simulator::Instruction& inst) {
+    return (inst.opcode == OP_BRANCH || inst.opcode == OP_JAL || inst.opcode == OP_JALR)
+           && inst.isLegal && !inst.isNop 
+           && inst.status != BUBBLE && inst.status != SQUASHED;
+}
+
+// count of load-use stalls
+static uint64_t loadStallCount = 0;
+
 // run the simulator for a certain number of cycles
 // return SUCCESS if reaching desired cycles.
 // return HALT if the simulator halts on 0xfeedfeed
@@ -67,81 +94,89 @@ Status runCycles(uint64_t cycles) {
         count++;
         cycleCount++;
     
-        // WB stage
-        pipelineInfo.wbInst = simulator->simWB(pipelineInfo.memInst);
+        // Save Previous Cycle Pipeline State
+        Simulator::Instruction prevIFInst = pipelineInfo.ifInst;
+        Simulator::Instruction prevIDInst = pipelineInfo.idInst;
+        Simulator::Instruction prevEXInst = pipelineInfo.exInst;
+        Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
 
-        // Halt Check
-        if (pipelineInfo.wbInst.isHalt) {
-            pipeState.ifPC = pipelineInfo.ifInst.PC;
-            pipeState.ifStatus = pipelineInfo.ifInst.status;
-            pipeState.idInstr = pipelineInfo.idInst.instruction;
-            pipeState.idStatus = pipelineInfo.idInst.status;
-            pipeState.exInstr = pipelineInfo.exInst.instruction;
-            pipeState.exStatus = pipelineInfo.exInst.status;
-            pipeState.memInstr = pipelineInfo.memInst.instruction;
-            pipeState.memStatus = pipelineInfo.memInst.status;
-            pipeState.wbInstr = pipelineInfo.wbInst.instruction;
-            pipeState.wbStatus = pipelineInfo.wbInst.status;
-            dumpPipeState(pipeState, output);
-            return HALT;
-            break;
+        // Decode IF Stage
+        Simulator::Instruction decode = simulator->simID(PC);
+
+        bool stall = false;
+
+        // Check for data hazards 
+        if (isLoad(prevIDInst)) {
+            uint64_t loadRd = prevIDInst.rd;
+
+            if (isStore(decode)) {
+                if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
+            }
+
+            else {
+                if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
+                if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
+            }
         }
 
-        // MEM stage
-        pipelineInfo.memInst = simulator->simMEM(pipelineInfo.exInst);
+        // Check for data hazards with branches/jumps
+        if (!stall && isBranchOrJump(decode)) {
+            if (writesREG(prevEXInst) && !isLoad(prevEXInst)) {
+                uint64_t aluRd = prevIDInst.rd;
 
-        // EX stage
-        pipelineInfo.exInst = simulator->simEX(pipelineInfo.idInst);
+                if (decode.readsRs1 && decode.rs1 == aluRd != 0) {
+                    stall = true;
+                }
 
-        // ID stage
-        pipelineInfo.idInst = simulator->simID(pipelineInfo.ifInst);
+                if (decode.readsRs2 && decode.rs2 == aluRd != 0) {
+                    stall = true;
+                }
+            }
+        }
 
-        // Branch Handling
-        bool isBranchJump = (pipelineInfo.idInst.opcode == OP_JALR ||
-                                 pipelineInfo.idInst.opcode == OP_BRANCH ||
-                                 pipelineInfo.idInst.opcode == OP_JAL);
+        // Check for data hazards with stores
+        if (!stall && isBranchOrJump(decode)) {
+            // Check EX stage
+            if (isLoad(prevIDInst)) {
+                uint64_t loadRd = prevIDInst.rd;
 
-        bool taken = false;
+                if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
 
-            // check if branch/jump is taken or not
-        if (isBranchJump && pipelineInfo.idInst.isLegal 
-            && !pipelineInfo.idInst.isNop && pipelineInfo.idInst.status != BUBBLE) {
-
-                if (pipelineInfo.idInst.nextPC != pipelineInfo.ifInst.PC + 4) {
-                    taken = true;
+                if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
                 }
         }
 
-            // taken condition handling
-        if (taken) {
-            pipelineInfo.ifInst.status = SQUASHED;
-            PC = pipelineInfo.idInst.nextPC;
-            pipelineInfo.ifInst = simulator->simIF(PC);
-            PC += 4;
-        }
-            // untaken condition handling
-        else {
-            pipelineInfo.ifInst = simulator->simIF(PC);
-            PC += 4;
-        }
+            // Check MEM stage
+            else if (isLoad(prevEXInst)) {
+                uint64_t loadRd = prevEXInst.rd;
 
-        // Dump pipe state
-        pipeState.ifPC = pipelineInfo.ifInst.PC;
-        pipeState.ifStatus = pipelineInfo.ifInst.status;
-        pipeState.idInstr = pipelineInfo.idInst.instruction;
-        pipeState.idStatus = pipelineInfo.idInst.status;
-        pipeState.exInstr = pipelineInfo.exInst.instruction;
-        pipeState.exStatus = pipelineInfo.exInst.status;
-        pipeState.memInstr = pipelineInfo.memInst.instruction;
-        pipeState.memStatus = pipelineInfo.memInst.status;
-        pipeState.wbInstr = pipelineInfo.wbInst.instruction;
-        pipeState.wbStatus = pipelineInfo.wbInst.status;
+                if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
 
-        if (status != HALT) {
-            status = dumpPipeState(pipeState, output);
+                if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    stall = true;
+                    loadStallCount++;
+                }
         }
+    }
 
-        return status;
+    
 }
 
 // run till halt (call runCycles() with cycles == 1 each time) until
