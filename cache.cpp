@@ -5,6 +5,7 @@
 #include <random>
 
 using namespace std;
+std::vector<Set> sets;
 
 // Random generator for cache hit/miss simulation
 static std::mt19937 generator(42);  // Fixed seed for deterministic results
@@ -14,16 +15,61 @@ std::uniform_real_distribution<double> distribution(0.0, 1.0);
 Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configParam) {
     // Here you can initialize other cache-specific attributes
     // For instance, if you had cache tables or other structures, initialize them here
+    sets.resize((config.cacheSize / config.blockSize) / config.ways);
 }
 
 // Access method definition
 bool Cache::access(uint64_t address, CacheOperation readWrite) {
     // For simplicity, we're using a random boolean to simulate cache hit/miss
-    bool hit = distribution(generator) < 0.20;  // random 20% hit for a strange cache
+    //bool hit = distribution(generator) < 0.20;  // random 20% hit for a strange cache
+    bool hit = false;
+
+    uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
+    uint64_t offset_bits = log2(config.blockSize);
+    uint64_t tag_bits = 64 - index_bits - offset_bits;
+
+    uint64_t index = (address >> offset_bits) & ((0x1 << index_bits) - 1);
+    uint64_t tag = (address >> offset_bits + index_bits);
+
+    Set currentSet = sets[index];
+    uint64_t oldLRU = 0;
+    uint64_t hitIndex = config.ways - 1;
+    for (int i = 0; i < config.ways; i++) {
+        Block currBlock = currentSet.ways[i];
+        if (currBlock.isValid && currBlock.tag == tag) {
+            hit = true;
+            hitIndex = i;
+            oldLRU = currBlock.lru;
+            break;
+        }
+    }
+
+    if (hit) {
+        for (int i = 0; i < config.ways; i++) {
+            Block currBlock = currentSet.ways[i];
+            if (i = hitIndex)
+                currBlock.lru = 0;
+            else if (currBlock.lru < oldLRU)
+                currBlock.lru++;
+        }
+    }
+    else {
+        for (int i = 0; i < config.ways; i++) {
+            Block currBlock = currentSet.ways[i];
+            if (i = hitIndex) {
+                currBlock.lru = 0;
+                currBlock.isValid = true;
+                currBlock.tag = tag;
+            }
+            else if (currBlock.lru < oldLRU)
+                currBlock.lru++;
+        }
+    }
     hits += hit;
     misses += !hit;
     return hit;
 }
+
 
 // debug: dump information as you needed, here are some examples
 Status Cache::dump(const std::string& base_output_name) {

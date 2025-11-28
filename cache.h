@@ -21,6 +21,19 @@ struct CacheConfig {
     }
 };
 
+struct Block {
+    // valid bit
+    bool isValid;
+     // tag
+     uint64_t tag;
+     // rank in LRU
+     uint64_t lru;
+};
+
+struct Set {
+    std::vector<Block> ways;
+};
+
 enum CacheDataType { I_CACHE = false, D_CACHE = true };
 enum CacheOperation { CACHE_READ = false, CACHE_WRITE = true };
 
