@@ -101,7 +101,7 @@ Status runCycles(uint64_t cycles) {
             Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
 
             // Decode IF Stage
-            Simulator::Instruction decode = simulator->simID(PC);
+            Simulator::Instruction decode = simulator->simID(prevIFInst);
 
             bool stall = false;
 
@@ -110,18 +110,18 @@ Status runCycles(uint64_t cycles) {
                 uint64_t loadRd = prevIDInst.rd;
 
                 if (isStore(decode)) {
-                    if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
                 }
 
                 else {
-                    if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
-                    if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -130,14 +130,14 @@ Status runCycles(uint64_t cycles) {
 
             // Check for data hazards with branches/jumps
             if (!stall && isBranchOrJump(decode)) {
-                if (writesREG(prevEXInst) && !isLoad(prevEXInst)) {
+                if (writesREG(prevIDInst) && !isLoad(prevIDInst)) {
                     uint64_t aluRd = prevIDInst.rd;
 
-                    if (decode.readsRs1 && decode.rs1 == aluRd != 0) {
+                    if ((decode.readsRs1 && decode.rs1 == aluRd) && ( aluRd!= 0)) {
                         stall = true;
                     }
 
-                    if (decode.readsRs2 && decode.rs2 == aluRd != 0) {
+                    if ((decode.readsRs2 && decode.rs2 == aluRd) && ( aluRd!= 0)) {
                         stall = true;
                     }
                 }
@@ -149,12 +149,12 @@ Status runCycles(uint64_t cycles) {
                 if (isLoad(prevIDInst)) {
                     uint64_t loadRd = prevIDInst.rd;
 
-                    if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
 
-                    if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -164,12 +164,12 @@ Status runCycles(uint64_t cycles) {
                 else if (isLoad(prevEXInst)) {
                     uint64_t loadRd = prevEXInst.rd;
 
-                    if (decode.readsRs1 && decode.rs1 == loadRd != 0) {
+                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
 
-                    if (decode.readsRs2 && decode.rs2 == loadRd != 0) {
+                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -200,21 +200,17 @@ Status runCycles(uint64_t cycles) {
         pipelineInfo.memInst = simulator->simMEM(prevEXInst);
 
         // Execute Stage
-        if (stall) {
-            pipelineInfo.exInst = nop(BUBBLE);
-        } else {
-            pipelineInfo.exInst = simulator->simEX(prevIDInst);
-        }
+        pipelineInfo.exInst = simulator->simEX(prevIDInst);
 
         // Instruction Decode Stage
         if (stall) {
-            pipelineInfo.idInst = prevIDInst;
+            pipelineInfo.idInst = nop(BUBBLE);
         } else {
             pipelineInfo.idInst = decode;
         }
 
         // Check for Branch
-        book taken = false;
+        bool taken = false;
         if (!stall && isBranchOrJump(pipelineInfo.idInst)) {
             if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4) {
                 taken = true;
