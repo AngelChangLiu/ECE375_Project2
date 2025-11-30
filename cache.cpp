@@ -20,10 +20,9 @@ Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configPa
 
 // Access method definition
 bool Cache::access(uint64_t address, CacheOperation readWrite) {
-    // For simplicity, we're using a random boolean to simulate cache hit/miss
-    //bool hit = distribution(generator) < 0.20;  // random 20% hit for a strange cache
     bool hit = false;
 
+    // setting bits to extract fields from address
     uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
     uint64_t offset_bits = log2(config.blockSize);
     uint64_t tag_bits = 64 - index_bits - offset_bits;
@@ -31,6 +30,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
     uint64_t index = (address >> offset_bits) & ((0x1 << index_bits) - 1);
     uint64_t tag = (address >> offset_bits + index_bits);
 
+    // search through set for block that contains tag from address
     Set currentSet = sets[index];
     uint64_t oldLRU = 0;
     uint64_t hitIndex = config.ways - 1;
@@ -44,6 +44,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
         }
     }
 
+    // if tag is found, update lru valuves
     if (hit) {
         for (int i = 0; i < config.ways; i++) {
             Block currBlock = currentSet.ways[i];
@@ -53,6 +54,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
                 currBlock.lru++;
         }
     }
+        // if tag is not found, update lru valuves
     else {
         for (int i = 0; i < config.ways; i++) {
             Block currBlock = currentSet.ways[i];
