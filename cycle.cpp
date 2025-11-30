@@ -100,8 +100,8 @@ Status runCycles(uint64_t cycles) {
             Simulator::Instruction prevEXInst = pipelineInfo.exInst;
             Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
 
-            // Decode IF Stage
-            Simulator::Instruction decode = simulator->simID(prevIFInst);
+            // Speculative Decode
+            Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
 
             bool stall = false;
 
@@ -109,19 +109,19 @@ Status runCycles(uint64_t cycles) {
             if (isLoad(prevIDInst)) {
                 uint64_t loadRd = prevIDInst.rd;
 
-                if (isStore(decode)) {
-                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
+                if (isStore(spec_decode)) {
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
                 }
 
                 else {
-                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
-                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -129,32 +129,32 @@ Status runCycles(uint64_t cycles) {
             }
 
             // Check for data hazards with branches/jumps
-            if (!stall && isBranchOrJump(decode)) {
+            if (!stall && isBranchOrJump(spec_decode)) {
                 if (writesREG(prevIDInst) && !isLoad(prevIDInst)) {
                     uint64_t aluRd = prevIDInst.rd;
 
-                    if ((decode.readsRs1 && decode.rs1 == aluRd) && ( aluRd!= 0)) {
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && ( aluRd!= 0)) {
                         stall = true;
                     }
 
-                    if ((decode.readsRs2 && decode.rs2 == aluRd) && ( aluRd!= 0)) {
+                    if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && ( aluRd!= 0)) {
                         stall = true;
                     }
                 }
             }
 
             // Check for data hazards with stores
-            if (!stall && isBranchOrJump(decode)) {
+            if (!stall && isBranchOrJump(spec_decode)) {
                 // Check EX stage
                 if (isLoad(prevIDInst)) {
                     uint64_t loadRd = prevIDInst.rd;
 
-                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
 
-                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -164,12 +164,12 @@ Status runCycles(uint64_t cycles) {
                 else if (isLoad(prevEXInst)) {
                     uint64_t loadRd = prevEXInst.rd;
 
-                    if ((decode.readsRs1 && decode.rs1 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
 
-                    if ((decode.readsRs2 && decode.rs2 == loadRd) && (loadRd != 0)) {
+                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
                         stall = true;
                         loadStallCount++;
                     }
@@ -206,7 +206,7 @@ Status runCycles(uint64_t cycles) {
         if (stall) {
             pipelineInfo.idInst = nop(BUBBLE);
         } else {
-            pipelineInfo.idInst = decode;
+            pipelineInfo.idInst = spec_decode;
         }
 
         // Check for Branch
