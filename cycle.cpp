@@ -13,8 +13,14 @@ static Cache* iCache = nullptr;
 static Cache* dCache = nullptr;
 static std::string output;
 static uint64_t cycleCount = 0;
-
+// count of load-use stalls
+static uint64_t loadStallCount = 0;
+// remaining stall cycles
+static uint64_t remainingStallCycles = 0;
 static uint64_t PC = 0;
+
+// Exception Address
+#define EXC_HANDLER 0x8000
 
 /**TODO: Implement pipeline simulation for the RISCV machine in this file.
  * A basic template is provided below that doesn't account for any hazards.
@@ -74,14 +80,12 @@ static bool isBranchOrJump(const Simulator::Instruction& inst) {
 }
 
 
-// count of load-use stalls
-static uint64_t loadStallCount = 0;
-
 // run the simulator for a certain number of cycles
 // return SUCCESS if reaching desired cycles.
 // return HALT if the simulator halts on 0xfeedfeed
 
 Status runCycles(uint64_t cycles) {
+    uint64_t fowardValue;
     uint64_t count = 0;
     auto status = SUCCESS;
     PipeState pipeState = {
@@ -106,7 +110,17 @@ Status runCycles(uint64_t cycles) {
             Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
 
             bool stall = false;
+            int newStallCycles = 0;
+            bool illegalExc = false;
+            bool memExc = false;
 
+
+            if (remainingStallCycles > 0) {
+                stall = true;
+                remainingStallCycles--;
+            }
+
+            else {
             // Check for data hazards 
             if (isLoad(prevIDInst)) {
                 uint64_t loadRd = prevIDInst.rd;
@@ -118,15 +132,58 @@ Status runCycles(uint64_t cycles) {
                     }
                 }
 
-                else {
+                else if (isBranchOrJump(spec_decode)) {
+
+                    bool stallRequired = false;
+
                     if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
+                        stallRequired = true;
                     }
                     if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
+                        stallRequired = true;
+                    }
+
+                    if (stallRequired) {
+                        stall = true;
+                        remainingStallCycles = 1;
+                        loadStallCount++;
+                }
+            }
+
+            else {
+
+                    bool stallRequired = false;
+
+                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
+                        stallRequired = true;
+                    }
+                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
+                        stallRequired = true;
+                    }
+
+                    if (stallRequired) {
                         stall = true;
                         loadStallCount++;
-                    }
+                }
+            }
+        }
+
+
+            if (!stall && isBranchOrJump(spec_decode) && isLoad(prevEXInst)) {
+                uint64_t loadRd = prevEXInst.rd;
+                bool stallRequired = false;
+
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
+                    stallRequired = true;
+                }
+
+                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
+                    stallRequired= true;
+                }
+
+                if (stallRequired) {
+                    stall = true;
+                    loadStallCount++;
                 }
             }
 
@@ -134,49 +191,22 @@ Status runCycles(uint64_t cycles) {
             if (!stall && isBranchOrJump(spec_decode)) {
                 if (writesREG(prevIDInst) && !isLoad(prevIDInst)) {
                     uint64_t aluRd = prevIDInst.rd;
+                    bool stallRequired = false;
 
                     if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && ( aluRd!= 0)) {
-                        stall = true;
+                        stallRequired = true;
                     }
 
                     if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && ( aluRd!= 0)) {
+                        stallRequired = true;
+                    }
+
+                    if (stallRequired) {
                         stall = true;
                     }
                 }
             }
-
-            // Check for data hazards with stores
-            if (!stall && isBranchOrJump(spec_decode)) {
-                // Check EX stage
-                if (isLoad(prevIDInst)) {
-                    uint64_t loadRd = prevIDInst.rd;
-
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                }
-
-                // Check MEM stage
-                else if (isLoad(prevEXInst)) {
-                    uint64_t loadRd = prevEXInst.rd;
-
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                }
-            }
+        }
 
         // Write Back Stage
         pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
@@ -198,18 +228,46 @@ Status runCycles(uint64_t cycles) {
             break;
         }
 
+        // Foward WB -> MEM
+        if (isStore(prevEXInst) && writesREG(prevMEMInst)) {
+            uint64_t wbRd = prevMEMInst.rd;
+
+            if ((prevEXInst.rs2 == wbRd) && (wbRd != 0)) {
+                if (isLoad(prevMEMInst)) {
+                    prevEXInst.op2Val = prevMEMInst.memResult;
+                } 
+                
+                else {
+                    prevEXInst.op2Val = prevMEMInst.arithResult;
+                }
+            }
+        }
+
         // Memory Stage
         pipelineInfo.memInst = simulator->simMEM(prevEXInst);
+
+        if (pipelineInfo.memInst.memException) {
+            memExc = true;
+            pipelineInfo.memInst.status = SQUASHED;
+        }
 
         // Forward from MEM → EX
         if (writesREG(prevMEMInst)) {
             uint64_t memRd = prevMEMInst.rd;
+            
+            if (isLoad(prevMEMInst)) {
+                fowardValue = prevMEMInst.memResult;
+            } 
+            
+            else {
+                fowardValue = prevMEMInst.arithResult;
+            }
 
             if (prevIDInst.readsRs1 && prevIDInst.rs1 == memRd && memRd != 0) {
-                prevIDInst.op1Val = prevMEMInst.memResult;   // load or ALU (after MEM)
+                prevIDInst.op1Val = fowardValue;  
             }
             if (prevIDInst.readsRs2 && prevIDInst.rs2 == memRd && memRd != 0) {
-                prevIDInst.op2Val = prevMEMInst.memResult;
+                prevIDInst.op2Val = fowardValue;
             }
         }
 
@@ -218,7 +276,7 @@ Status runCycles(uint64_t cycles) {
             uint64_t exRd = prevEXInst.rd;
 
             if (prevIDInst.readsRs1 && prevIDInst.rs1 == exRd && exRd != 0) {
-                prevIDInst.op1Val = prevEXInst.arithResult;   // ALU result
+                prevIDInst.op1Val = prevEXInst.arithResult;
             }
             if (prevIDInst.readsRs2 && prevIDInst.rs2 == exRd && exRd != 0) {
                 prevIDInst.op2Val = prevEXInst.arithResult;
@@ -234,6 +292,14 @@ Status runCycles(uint64_t cycles) {
             pipelineInfo.idInst = spec_decode;
         }
 
+        if (!pipelineInfo.idInst.isLegal && !pipelineInfo.idInst.isNop &&
+            pipelineInfo.idInst.status != BUBBLE && 
+            pipelineInfo.idInst.status != SQUASHED &&
+            !pipelineInfo.idInst.isHalt) {
+            illegalExc = true;
+            pipelineInfo.idInst.status = SQUASHED;
+        }
+
         // Check for Branch
         bool taken = false;
         if (!stall && isBranchOrJump(pipelineInfo.idInst)) {
@@ -243,8 +309,24 @@ Status runCycles(uint64_t cycles) {
         }
 
         // Instruction Fetch Stage
-        if (stall) {
+        if (illegalExc) {
+            pipelineInfo.ifInst.status = SQUASHED;
+            PC = EXC_HANDLER;
+        } 
+        
+        else if (memExc) {
+            pipelineInfo.ifInst.status = SQUASHED;
+            pipelineInfo.idInst.status = SQUASHED;
+            pipelineInfo.exInst.status = SQUASHED;
+            PC = EXC_HANDLER;
+        }
+
+        else if (stall) {
             pipelineInfo.ifInst = prevIFInst;
+
+            if (isBranchOrJump(spec_decode)) {
+                pipelineInfo.ifInst.status = SPECULATIVE;
+            }
         } 
         
         else if (taken) {
@@ -255,6 +337,11 @@ Status runCycles(uint64_t cycles) {
 
         else {
             pipelineInfo.ifInst = simulator->simIF(PC);
+
+            if (isBranchOrJump(pipelineInfo.idInst)) {
+                pipelineInfo.ifInst.status = SPECULATIVE;
+            }
+
             PC += 4;
         }
     }
