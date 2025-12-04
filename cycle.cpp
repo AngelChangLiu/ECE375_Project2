@@ -99,12 +99,25 @@ Status runCycles(uint64_t cycles) {
             Simulator::Instruction prevIDInst = pipelineInfo.idInst;
             Simulator::Instruction prevEXInst = pipelineInfo.exInst;
             Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
+            Simulator::Instruction prevWBInst = pipelineInfo.wbInst;
 
             // Speculative Decode
             Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
 
             bool stall = false;
 
+            // LOAD-USE HAZARD DETECTION
+
+            if (isLoad(prevIDInst)) {
+                uint64_t loadRd = prevIDInst.rd;
+
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd && loadRd != 0) ||
+                    (spec_decode.readsRs2 && spec_decode.rs2 == loadRd && loadRd != 0)) {
+        
+                    stall = true;
+                    loadStallCount++;
+                }   
+            }
             // Check for data hazards 
             if (isLoad(prevIDInst)) {
                 uint64_t loadRd = prevIDInst.rd;
@@ -158,7 +171,7 @@ Status runCycles(uint64_t cycles) {
                         stall = true;
                         loadStallCount++;
                     }
-            }
+                }
 
                 // Check MEM stage
                 else if (isLoad(prevEXInst)) {
@@ -173,8 +186,8 @@ Status runCycles(uint64_t cycles) {
                         stall = true;
                         loadStallCount++;
                     }
+                }
             }
-        }
 
         // Write Back Stage
         pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
@@ -199,6 +212,29 @@ Status runCycles(uint64_t cycles) {
         // Memory Stage
         pipelineInfo.memInst = simulator->simMEM(prevEXInst);
 
+        // Forward from MEM → EX
+        if (writesREG(prevMEMInst)) {
+            uint64_t memRd = prevMEMInst.rd;
+
+            if (prevIDInst.readsRs1 && prevIDInst.rs1 == memRd && memRd != 0) {
+                prevIDInst.op1Val = prevMEMInst.memResult;   // load or ALU (after MEM)
+            }
+            if (prevIDInst.readsRs2 && prevIDInst.rs2 == memRd && memRd != 0) {
+                prevIDInst.op2Val = prevMEMInst.memResult;
+            }
+        }
+
+        // Forward from EX → EX
+        if (writesREG(prevEXInst)) {
+            uint64_t exRd = prevEXInst.rd;
+
+            if (prevIDInst.readsRs1 && prevIDInst.rs1 == exRd && exRd != 0) {
+                prevIDInst.op1Val = prevEXInst.arithResult;   // ALU result
+            }
+            if (prevIDInst.readsRs2 && prevIDInst.rs2 == exRd && exRd != 0) {
+                prevIDInst.op2Val = prevEXInst.arithResult;
+            }
+        }
         // Execute Stage
         pipelineInfo.exInst = simulator->simEX(prevIDInst);
 
@@ -223,10 +259,9 @@ Status runCycles(uint64_t cycles) {
         } 
         
         else if (taken) {
-            pipelineInfo.ifInst.status = SQUASHED;
+            prevIFInst.status = SQUASHED;
+            pipelineInfo.ifInst = prevIFInst;
             PC = pipelineInfo.idInst.nextPC;
-            pipelineInfo.ifInst = simulator->simIF(PC);
-            PC += 4;
         }
 
         else {
@@ -267,7 +302,14 @@ Status runTillHalt() {
 // dump the state of the simulator
 Status finalizeSimulator() {
     simulator->dumpRegMem(output);
-    SimulationStats stats{simulator->getDin(),  cycleCount, 0, 0, 0, 0, 0};  // TODO incomplete implementation
-    dumpSimStats(stats, output);
+    SimulationStats stats{
+        simulator->getDin(),
+        cycleCount,
+        iCache->getHits(),
+        iCache->getMisses(),
+        dCache->getHits(),
+        dCache->getMisses(),
+        loadStallCount
+};    dumpSimStats(stats, output);
     return SUCCESS;
 }
