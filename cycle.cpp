@@ -107,18 +107,6 @@ Status runCycles(uint64_t cycles) {
 
             bool stall = false;
 
-            // LOAD-USE HAZARD DETECTION
-
-            if (isLoad(prevIDInst)) {
-                uint64_t loadRd = prevIDInst.rd;
-
-                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd && loadRd != 0) ||
-                    (spec_decode.readsRs2 && spec_decode.rs2 == loadRd && loadRd != 0)) {
-        
-                    stall = true;
-                    loadStallCount++;
-                }   
-            }
             // Check for data hazards 
             if (isLoad(prevIDInst)) {
                 uint64_t loadRd = prevIDInst.rd;
