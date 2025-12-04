@@ -73,6 +73,7 @@ static bool isBranchOrJump(const Simulator::Instruction& inst) {
            && inst.status != BUBBLE && inst.status != SQUASHED;
 }
 
+
 // count of load-use stalls
 static uint64_t loadStallCount = 0;
 
