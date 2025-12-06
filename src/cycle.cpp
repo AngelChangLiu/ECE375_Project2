@@ -96,6 +96,10 @@ Status runCycles(uint64_t cycles) {
     while (cycles == 0 || count < cycles) {
 
             pipeState.cycle = cycleCount;
+
+            // Angel debuggin
+            std::cout << "[DEBUG] Starting cycle " << cycleCount << std::endl;
+
             count++;
             cycleCount++;
         
@@ -322,6 +326,10 @@ Status runCycles(uint64_t cycles) {
         }
 
         else if (stall) {
+
+            // Angel debuggin
+            std::cout << "[DEBUG] STALL at cycle " << cycleCount << std::endl;
+
             pipelineInfo.ifInst = prevIFInst;
 
             if (isBranchOrJump(spec_decode)) {
@@ -330,8 +338,15 @@ Status runCycles(uint64_t cycles) {
         } 
         
         else if (taken) {
+
+            // Angel debuggin
+            std::cout << "[DEBUG] Branch taken → PC = 0x" 
+                << std::hex << pipelineInfo.idInst.nextPC 
+                << std::dec << std::endl;
+                
             prevIFInst.status = SQUASHED;
             pipelineInfo.ifInst = prevIFInst;
+
             PC = pipelineInfo.idInst.nextPC;
         }
 
@@ -341,6 +356,9 @@ Status runCycles(uint64_t cycles) {
             if (isBranchOrJump(pipelineInfo.idInst)) {
                 pipelineInfo.ifInst.status = SPECULATIVE;
             }
+
+            // Angel debuggin
+            std::cout << "[DEBUG] PC moves to " << std::hex << PC+4 << std::dec << std::endl;
 
             PC += 4;
         }

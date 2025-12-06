@@ -20,7 +20,7 @@ Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configPa
 
 // Access method definition
 bool Cache::access(uint64_t address, CacheOperation readWrite) {
-    bool hit = false;
+    bool hit = true; // Angel changed to true for testing pipeline
 
     // setting bits to extract fields from address
     uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
