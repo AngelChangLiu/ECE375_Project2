@@ -4,42 +4,55 @@
 #include <vector>
 #include "Utilities.h"
 
-struct CacheConfig {
+struct CacheConfig
+{
     // Cache size in bytes.
     uint64_t cacheSize;
     // Cache block size in bytes.
     uint64_t blockSize;
-    // Type of cache: set associativity 
+    // Type of cache: set associativity
     uint64_t ways;
     // Additional miss latency in cycles.
     uint64_t missLatency;
     // debug: Overload << operator to allow easy printing of CacheConfig
-    friend std::ostream& operator<<(std::ostream& os, const CacheConfig& config) {
+    friend std::ostream &operator<<(std::ostream &os, const CacheConfig &config)
+    {
         os << "CacheConfig { " << config.cacheSize << ", " << config.blockSize << ", "
            << config.ways << ", " << config.missLatency << " }";
         return os;
     }
 };
 
-struct Block {
+struct Block
+{
     // valid bit
     bool isValid;
-     // tag
-     uint64_t tag;
-     // rank in LRU
-     uint64_t lru;
+    // tag
+    uint64_t tag;
+    // rank in LRU
+    uint64_t lru;
 };
 
-struct Set {
+struct Set
+{
     std::vector<Block> ways;
 };
 
-enum CacheDataType { I_CACHE = false, D_CACHE = true };
-enum CacheOperation { CACHE_READ = false, CACHE_WRITE = true };
+enum CacheDataType
+{
+    I_CACHE = false,
+    D_CACHE = true
+};
+enum CacheOperation
+{
+    CACHE_READ = false,
+    CACHE_WRITE = true
+};
 
-class Cache {
+class Cache
+{
 private:
-    uint64_t hits, misses;    
+    uint64_t hits, misses;
     CacheDataType type;
 
 public:
@@ -56,11 +69,11 @@ public:
     bool access(uint64_t address, CacheOperation readWrite);
 
     // debug: dump information as you needed
-    Status dump(const std::string& base_output_name);
+    Status dump(const std::string &base_output_name);
 
     // TODO: You may add more methods and fields as needed
-    uint64_t incrementHits(){ hits = hits + 1; };
-    uint64_t incrementMisses(){ misses = misses + 1; };
+    bool incrementHits();
+    bool incrementMisses();
     uint64_t getHits() { return hits; }
     uint64_t getMisses() { return misses; }
 };

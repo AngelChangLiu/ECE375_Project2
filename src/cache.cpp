@@ -81,6 +81,17 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
     return hit;
 }
 
+bool Cache::incrementHits()
+{
+    hits = hits + 1;
+    return true;
+}
+
+bool Cache::incrementMisses()
+{
+    misses = misses + 1;
+    return true;
+}
 // debug: dump information as you needed, here are some examples
 Status Cache::dump(const std::string &base_output_name)
 {
