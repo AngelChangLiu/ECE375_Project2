@@ -8,18 +8,20 @@ using namespace std;
 std::vector<Set> sets;
 
 // Random generator for cache hit/miss simulation
-static std::mt19937 generator(42);  // Fixed seed for deterministic results
+static std::mt19937 generator(42); // Fixed seed for deterministic results
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 // Constructor definition
-Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configParam) {
+Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configParam)
+{
     // Here you can initialize other cache-specific attributes
     // For instance, if you had cache tables or other structures, initialize them here
     sets.resize((config.cacheSize / config.blockSize) / config.ways);
 }
 
 // Access method definition
-bool Cache::access(uint64_t address, CacheOperation readWrite) {
+bool Cache::access(uint64_t address, CacheOperation readWrite)
+{
     bool hit = true; // Angel changed to true for testing pipeline
 
     // setting bits to extract fields from address
@@ -34,9 +36,11 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
     Set currentSet = sets[index];
     uint64_t oldLRU = 0;
     uint64_t hitIndex = config.ways - 1;
-    for (int i = 0; i < config.ways; i++) {
+    for (int i = 0; i < config.ways; i++)
+    {
         Block currBlock = currentSet.ways[i];
-        if (currBlock.isValid && currBlock.tag == tag) {
+        if (currBlock.isValid && currBlock.tag == tag)
+        {
             hit = true;
             hitIndex = i;
             oldLRU = currBlock.lru;
@@ -45,8 +49,10 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
     }
 
     // if tag is found, update lru valuves
-    if (hit) {
-        for (int i = 0; i < config.ways; i++) {
+    if (hit)
+    {
+        for (int i = 0; i < config.ways; i++)
+        {
             Block currBlock = currentSet.ways[i];
             if (i = hitIndex)
                 currBlock.lru = 0;
@@ -54,11 +60,14 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
                 currBlock.lru++;
         }
     }
-        // if tag is not found, update lru valuves
-    else {
-        for (int i = 0; i < config.ways; i++) {
+    // if tag is not found, update lru valuves
+    else
+    {
+        for (int i = 0; i < config.ways; i++)
+        {
             Block currBlock = currentSet.ways[i];
-            if (i = hitIndex) {
+            if (i = hitIndex)
+            {
                 currBlock.lru = 0;
                 currBlock.isValid = true;
                 currBlock.tag = tag;
@@ -72,11 +81,12 @@ bool Cache::access(uint64_t address, CacheOperation readWrite) {
     return hit;
 }
 
-
 // debug: dump information as you needed, here are some examples
-Status Cache::dump(const std::string& base_output_name) {
+Status Cache::dump(const std::string &base_output_name)
+{
     ofstream cache_out(base_output_name + "_cache_state.out");
-    if (cache_out) {
+    if (cache_out)
+    {
         cache_out << "---------------------" << endl;
         cache_out << "Begin Register Values" << endl;
         cache_out << "---------------------" << endl;
@@ -89,7 +99,9 @@ Status Cache::dump(const std::string& base_output_name) {
         cache_out << "End Register Values" << endl;
         cache_out << "---------------------" << endl;
         return SUCCESS;
-    } else {
+    }
+    else
+    {
         cerr << LOG_ERROR << "Could not create cache state dump file" << endl;
         return ERROR;
     }
