@@ -59,10 +59,8 @@ public:
     Status dump(const std::string& base_output_name);
 
     // TODO: You may add more methods and fields as needed
-    // increase hits by one:
-    bool incrementHits();
-    // increase misses by one:
-    bool incrementMisses();
+    uint64_t incrementHits(){ hits = hits + 1; };
+    uint64_t incrementMisses(){ misses = misses + 1; };
     uint64_t getHits() { return hits; }
     uint64_t getMisses() { return misses; }
 };

@@ -22,7 +22,7 @@ Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configPa
 // Access method definition
 bool Cache::access(uint64_t address, CacheOperation readWrite)
 {
-    bool hit = false;
+    bool hit = true; // Angel changed to true for testing pipeline
 
     // setting bits to extract fields from address
     uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
@@ -81,15 +81,6 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
     return hit;
 }
 
-bool Cache::incrementHits()
-{
-    hits = hits + 1;
-}
-
-bool Cache::incrementMisses()
-{
-    misses = misses + 1;
-}
 // debug: dump information as you needed, here are some examples
 Status Cache::dump(const std::string &base_output_name)
 {
