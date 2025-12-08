@@ -8,9 +8,9 @@
 #include "cache.h"
 #include "simulator.h"
 
-static Simulator* simulator = nullptr;
-static Cache* iCache = nullptr;
-static Cache* dCache = nullptr;
+static Simulator *simulator = nullptr;
+static Cache *iCache = nullptr;
+static Cache *dCache = nullptr;
 static std::string output;
 static uint64_t cycleCount = 0;
 
@@ -20,7 +20,8 @@ static uint64_t PC = 0;
  * A basic template is provided below that doesn't account for any hazards.
  */
 
-Simulator::Instruction nop(StageStatus status) {
+Simulator::Instruction nop(StageStatus status)
+{
     Simulator::Instruction nop;
     nop.instruction = 0x00000013;
     nop.isLegal = true;
@@ -29,7 +30,8 @@ Simulator::Instruction nop(StageStatus status) {
     return nop;
 }
 
-static struct PipelineInfo {
+static struct PipelineInfo
+{
     Simulator::Instruction ifInst = nop(IDLE);
     Simulator::Instruction idInst = nop(IDLE);
     Simulator::Instruction exInst = nop(IDLE);
@@ -37,10 +39,10 @@ static struct PipelineInfo {
     Simulator::Instruction wbInst = nop(IDLE);
 } pipelineInfo;
 
-
 // initialize the simulator
-Status initSimulator(CacheConfig& iCacheConfig, CacheConfig& dCacheConfig, MemoryStore* mem,
-                     const std::string& output_name) {
+Status initSimulator(CacheConfig &iCacheConfig, CacheConfig &dCacheConfig, MemoryStore *mem,
+                     const std::string &output_name)
+{
     output = output_name;
     simulator = new Simulator();
     simulator->setMemory(mem);
@@ -50,27 +52,26 @@ Status initSimulator(CacheConfig& iCacheConfig, CacheConfig& dCacheConfig, Memor
 }
 
 // return true if the instruction is a memory access
-static bool isLoad(const Simulator::Instruction& inst) {
-    return inst.readsMem && inst.isLegal && !inst.isNop 
-            && inst.status != BUBBLE && inst.status != SQUASHED;
+static bool isLoad(const Simulator::Instruction &inst)
+{
+    return inst.readsMem && inst.isLegal && !inst.isNop && inst.status != BUBBLE && inst.status != SQUASHED;
 }
 
 // return true if the instruction is a memory access
-static bool isStore(const Simulator::Instruction& inst) {
-    return inst.writesMem && inst.isLegal && !inst.isNop 
-           && inst.status != BUBBLE && inst.status != SQUASHED;
+static bool isStore(const Simulator::Instruction &inst)
+{
+    return inst.writesMem && inst.isLegal && !inst.isNop && inst.status != BUBBLE && inst.status != SQUASHED;
 }
 
 // return true if the instruction writes to a register
-static bool writesREG(const Simulator::Instruction& inst) {
-    return inst.writesRd && inst.rd != 0 &&inst.isLegal && !inst.isNop 
-           && inst.status != BUBBLE && inst.status != SQUASHED;
+static bool writesREG(const Simulator::Instruction &inst)
+{
+    return inst.writesRd && inst.rd != 0 && inst.isLegal && !inst.isNop && inst.status != BUBBLE && inst.status != SQUASHED;
 }
 
-static bool isBranchOrJump(const Simulator::Instruction& inst) {
-    return (inst.opcode == OP_BRANCH || inst.opcode == OP_JAL || inst.opcode == OP_JALR)
-           && inst.isLegal && !inst.isNop 
-           && inst.status != BUBBLE && inst.status != SQUASHED;
+static bool isBranchOrJump(const Simulator::Instruction &inst)
+{
+    return (inst.opcode == OP_BRANCH || inst.opcode == OP_JAL || inst.opcode == OP_JALR) && inst.isLegal && !inst.isNop && inst.status != BUBBLE && inst.status != SQUASHED;
 }
 
 // count of load-use stalls
@@ -80,107 +81,164 @@ static uint64_t loadStallCount = 0;
 // return SUCCESS if reaching desired cycles.
 // return HALT if the simulator halts on 0xfeedfeed
 
-Status runCycles(uint64_t cycles) {
+Status runCycles(uint64_t cycles)
+{
     uint64_t count = 0;
+
     auto status = SUCCESS;
+
+    uint64_t const dCacheStalls = dCache->config.missLatency;
+    uint64_t const iCacheStalls = iCache->config.missLatency;
+
+    bool instFetchMiss = false;
+    bool dataFetchMiss = false;
+
+    uint64_t instMissStalls = 0;
+    uint64_t dataMissStalls = 0;
     PipeState pipeState = {
         0,
     };
 
+    while (cycles == 0 || count < cycles)
+    {
 
-    while (cycles == 0 || count < cycles) {
+        pipeState.cycle = cycleCount;
+        count++;
+        cycleCount++;
 
-            pipeState.cycle = cycleCount;
-            count++;
-            cycleCount++;
-        
-            // Save Previous Cycle Pipeline State
-            Simulator::Instruction prevIFInst = pipelineInfo.ifInst;
-            Simulator::Instruction prevIDInst = pipelineInfo.idInst;
-            Simulator::Instruction prevEXInst = pipelineInfo.exInst;
-            Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
+        // Save Previous Cycle Pipeline State
+        Simulator::Instruction prevIFInst = pipelineInfo.ifInst;
+        Simulator::Instruction prevIDInst = pipelineInfo.idInst;
+        Simulator::Instruction prevEXInst = pipelineInfo.exInst;
+        Simulator::Instruction prevMEMInst = pipelineInfo.memInst;
 
-            // Speculative Decode
-            Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
+        // Speculative Decode
+        Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
 
-            bool stall = false;
+        bool stall = false;
+        bool cacheMiss = false;
 
-            // Check for data hazards 
-            if (isLoad(prevIDInst)) {
-                uint64_t loadRd = prevIDInst.rd;
+        // Check for data hazards
+        if (isLoad(prevIDInst))
+        {
+            uint64_t loadRd = prevIDInst.rd;
 
-                if (isStore(spec_decode)) {
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                }
-
-                else {
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
+            if (isStore(spec_decode))
+            {
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
                 }
             }
 
-            // Check for data hazards with branches/jumps
-            if (!stall && isBranchOrJump(spec_decode)) {
-                if (writesREG(prevIDInst) && !isLoad(prevIDInst)) {
-                    uint64_t aluRd = prevIDInst.rd;
-
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && ( aluRd!= 0)) {
-                        stall = true;
-                    }
-
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && ( aluRd!= 0)) {
-                        stall = true;
-                    }
+            else
+            {
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
                 }
-            }
-
-            // Check for data hazards with stores
-            if (!stall && isBranchOrJump(spec_decode)) {
-                // Check EX stage
-                if (isLoad(prevIDInst)) {
-                    uint64_t loadRd = prevIDInst.rd;
-
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-            }
-
-                // Check MEM stage
-                else if (isLoad(prevEXInst)) {
-                    uint64_t loadRd = prevEXInst.rd;
-
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
-
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0)) {
-                        stall = true;
-                        loadStallCount++;
-                    }
+                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
+                }
             }
         }
 
-        // Write Back Stage
-        pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
+        // Check for data hazards with branches/jumps
+        if (!stall && isBranchOrJump(spec_decode))
+        {
+            if (writesREG(prevIDInst) && !isLoad(prevIDInst))
+            {
+                uint64_t aluRd = prevIDInst.rd;
+
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && (aluRd != 0))
+                {
+                    stall = true;
+                }
+
+                if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && (aluRd != 0))
+                {
+                    stall = true;
+                }
+            }
+        }
+
+        // Check for data hazards with stores
+        if (!stall && isBranchOrJump(spec_decode))
+        {
+            // Check EX stage
+            if (isLoad(prevIDInst))
+            {
+                uint64_t loadRd = prevIDInst.rd;
+
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
+                }
+
+                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
+                }
+            }
+
+            // Check MEM stage
+            else if (isLoad(prevEXInst))
+            {
+                uint64_t loadRd = prevEXInst.rd;
+
+                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
+                }
+
+                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+                {
+                    stall = true;
+                    loadStallCount++;
+                }
+            }
+        }
+
+        // Memory Stage
+        // Check MEM stages for Cache Miss:
+        CacheOperation writeToCache = CACHE_READ;
+        if (prevEXInst.writesMem)
+        {
+            writeToCache = CACHE_WRITE;
+        }
+
+        if (!prevEXInst.isNop and (prevEXInst.readsMem or prevEXInst.writesMem) and !dCache->access(prevEXInst.memAddress, writeToCache))
+        {
+            dataFetchMiss = true;
+            dataMissStalls = 0;
+            // Trigger
+            dCache->incrementMisses();
+        }
+        else
+        {
+            dCache->incrementHits();
+        }
+
+        if (dataFetchMiss)
+        {
+            pipelineInfo.wbInst = nop(BUBBLE);
+        }
+        else
+        {
+            // Write Back Stage
+            pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
+        }
 
         // Halt check
-        if (pipelineInfo.wbInst.isHalt) {
+        if (pipelineInfo.wbInst.isHalt)
+        {
             pipeState.ifPC = pipelineInfo.ifInst.PC;
             pipeState.ifStatus = pipelineInfo.ifInst.status;
             pipeState.idInstr = pipelineInfo.idInst.instruction;
@@ -196,42 +254,111 @@ Status runCycles(uint64_t cycles) {
             break;
         }
 
-        // Memory Stage
-        pipelineInfo.memInst = simulator->simMEM(prevEXInst);
+        if (dataFetchMiss)
+        {
+            dataMissStalls += 1;
+            if (dataMissStalls == dCacheStalls)
+            {
+                dataFetchMiss = false;
+            }
+        }
+        else
+        {
+            pipelineInfo.memInst = simulator->simMEM(prevEXInst);
+        }
 
         // Execute Stage
-        pipelineInfo.exInst = simulator->simEX(prevIDInst);
+        if (!dataFetchMiss)
+        {
+            pipelineInfo.exInst = simulator->simEX(prevIDInst);
+        }
 
         // Instruction Decode Stage
-        if (stall) {
-            pipelineInfo.idInst = nop(BUBBLE);
-        } else {
+        if (!dataFetchMiss)
+        {
             pipelineInfo.idInst = spec_decode;
+        }
+        else if (stall)
+        {
+            pipelineInfo.idInst = nop(BUBBLE);
         }
 
         // Check for Branch
         bool taken = false;
-        if (!stall && isBranchOrJump(pipelineInfo.idInst)) {
-            if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4) {
+        if (!stall && isBranchOrJump(pipelineInfo.idInst))
+        {
+            if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4)
+            {
                 taken = true;
             }
         }
 
         // Instruction Fetch Stage
-        if (stall) {
+        if (stall or dataFetchMiss)
+        {
             pipelineInfo.ifInst = prevIFInst;
-        } 
-        
-        else if (taken) {
+        }
+        else if (taken)
+        {
             pipelineInfo.ifInst.status = SQUASHED;
             PC = pipelineInfo.idInst.nextPC;
-            pipelineInfo.ifInst = simulator->simIF(PC);
-            PC += 4;
-        }
+            // Check IF stages for Cache Miss:
+            if (!iCache->access(PC, CACHE_READ))
+            {
+                instFetchMiss = true;
+                instMissStalls = 0;
+                // Trigger Stalls:
+                iCache->incrementMisses();
+            }
+            else
+            {
+                iCache->incrementHits();
+            }
 
-        else {
-            pipelineInfo.ifInst = simulator->simIF(PC);
-            PC += 4;
+            if (instFetchMiss)
+            {
+                pipelineInfo.ifInst = nop(BUBBLE);
+                instMissStalls += 1;
+                if (instMissStalls == iCacheStalls)
+                {
+                    instFetchMiss = false;
+                }
+            }
+            else
+            {
+                pipelineInfo.ifInst = simulator->simIF(PC);
+                PC += 4;
+            }
+        }
+        else
+        {
+            // Check IF stages for Cache Miss:
+            if (!iCache->access(PC, CACHE_READ))
+            {
+                instFetchMiss = true;
+                instMissStalls = 0;
+                // Trigger Stalls:
+                iCache->incrementMisses();
+            }
+            else
+            {
+                iCache->incrementHits();
+            }
+
+            if (instFetchMiss)
+            {
+                pipelineInfo.ifInst = nop(BUBBLE);
+                instMissStalls += 1;
+                if (instMissStalls == iCacheStalls)
+                {
+                    instFetchMiss = false;
+                }
+            }
+            else
+            {
+                pipelineInfo.ifInst = simulator->simIF(PC);
+                PC += 4;
+            }
         }
     }
 
@@ -247,7 +374,8 @@ Status runCycles(uint64_t cycles) {
     pipeState.wbInstr = pipelineInfo.wbInst.instruction;
     pipeState.wbStatus = pipelineInfo.wbInst.status;
 
-    if (status != HALT) {
+    if (status != HALT)
+    {
         dumpPipeState(pipeState, output);
     }
     return status;
@@ -255,19 +383,23 @@ Status runCycles(uint64_t cycles) {
 
 // run till halt (call runCycles() with cycles == 1 each time) until
 // status tells you to HALT or ERROR out
-Status runTillHalt() {
+Status runTillHalt()
+{
     Status status;
-    while (true) {
+    while (true)
+    {
         status = static_cast<Status>(runCycles(1));
-        if (status == HALT) break;
+        if (status == HALT)
+            break;
     }
     return status;
 }
 
 // dump the state of the simulator
-Status finalizeSimulator() {
+Status finalizeSimulator()
+{
     simulator->dumpRegMem(output);
-    SimulationStats stats{simulator->getDin(),  cycleCount, 0, 0, 0, 0, 0};  // TODO incomplete implementation
+    SimulationStats stats{simulator->getDin(), cycleCount, 0, 0, 0, 0, 0}; // TODO incomplete implementation
     dumpSimStats(stats, output);
     return SUCCESS;
 }
