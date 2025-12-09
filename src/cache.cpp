@@ -5,7 +5,7 @@
 #include <random>
 
 using namespace std;
-std::vector<Set> sets;
+// std::vector<Set> sets;
 
 // Random generator for cache hit/miss simulation
 static std::mt19937 generator(42); // Fixed seed for deterministic results

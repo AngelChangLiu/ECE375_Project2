@@ -54,6 +54,7 @@ class Cache
 private:
     uint64_t hits, misses;
     CacheDataType type;
+    std::vector<Set> sets;
 
 public:
     CacheConfig config;

@@ -470,7 +470,7 @@ Status runCycles(uint64_t cycles)
 
             PC = pipelineInfo.idInst.nextPC;
         }
-        else if (instFetchMiss) 
+        else if (instFetchMiss or dataFetchMiss) 
         {
             pipelineInfo.ifInst = prevIFInst;
             std::cout << "[DEBUG] IF Stall, Cycle: " << cycleCount << std::endl;
