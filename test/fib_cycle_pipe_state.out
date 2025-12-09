@@ -15,514 +15,107 @@ Cycle:       13	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(
 Cycle:       14	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
 Cycle:       15	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
 Cycle:       16	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
-Cycle:       17	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
-Cycle:       18	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
-Cycle:       19	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       20	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       21	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       22	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       23	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       24	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       25	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       26	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       27	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       28	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       29	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       30	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       31	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       32	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       33	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       34	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       35	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       36	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       37	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       38	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       39	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       40	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       41	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       42	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       43	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       44	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       45	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       46	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       47	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       48	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       49	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       50	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       51	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       52	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       53	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       54	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       55	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       56	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       57	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       58	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       59	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       60	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       61	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       62	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       63	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       64	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       65	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       66	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       67	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       68	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       69	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       70	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       71	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       72	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       73	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       74	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       75	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       76	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       77	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       78	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       79	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       80	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       81	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       82	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       83	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       84	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       85	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       86	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       87	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       88	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       89	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       90	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       91	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       92	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       93	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       94	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       95	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       96	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       97	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       98	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:       99	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      100	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      101	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      102	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      103	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      104	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      105	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      106	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      107	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      108	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      109	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      110	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      111	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      112	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      113	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      114	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      115	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      116	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      117	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      118	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      119	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      120	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      121	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      122	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      123	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      124	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      125	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      126	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      127	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      128	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      129	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      130	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      131	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      132	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      133	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      134	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      135	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      136	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      137	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      138	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      139	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      140	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      141	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      142	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      143	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      144	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      145	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      146	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      147	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      148	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      149	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      150	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      151	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      152	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      153	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      154	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      155	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      156	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      157	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      158	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      159	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      160	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      161	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      162	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      163	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      164	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      165	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      166	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      167	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      168	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      169	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      170	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      171	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      172	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      173	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      174	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      175	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      176	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      177	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      178	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      179	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      180	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      181	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      182	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      183	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      184	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      185	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      186	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      187	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      188	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      189	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      190	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      191	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      192	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      193	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      194	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      195	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      196	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      197	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      198	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      199	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      200	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      201	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      202	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      203	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      204	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      205	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      206	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      207	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      208	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      209	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      210	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      211	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      212	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      213	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      214	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      215	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      216	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      217	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      218	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      219	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      220	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      221	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      222	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      223	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      224	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      225	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      226	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      227	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      228	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      229	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      230	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      231	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      232	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      233	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      234	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      235	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      236	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      237	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      238	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      239	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      240	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      241	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      242	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      243	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      244	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      245	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      246	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      247	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      248	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      249	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      250	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      251	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      252	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      253	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      254	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      255	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      256	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      257	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      258	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      259	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      260	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      261	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      262	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      263	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      264	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      265	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      266	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      267	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      268	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      269	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      270	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      271	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      272	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      273	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      274	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      275	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      276	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      277	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      278	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      279	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      280	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      281	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      282	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      283	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      284	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      285	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      286	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      287	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      288	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      289	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      290	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      291	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      292	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      293	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      294	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      295	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      296	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      297	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      298	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      299	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      300	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      301	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      302	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      303	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      304	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      305	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      306	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      307	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      308	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      309	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      310	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      311	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      312	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      313	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      314	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      315	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      316	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      317	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      318	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      319	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      320	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      321	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      322	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      323	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      324	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      325	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      326	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      327	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      328	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      329	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      330	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      331	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      332	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      333	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      334	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      335	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      336	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      337	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      338	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      339	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      340	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      341	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      342	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      343	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      344	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      345	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      346	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      347	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      348	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      349	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      350	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      351	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      352	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      353	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      354	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      355	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      356	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      357	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      358	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      359	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      360	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      361	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      362	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      363	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      364	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      365	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      366	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      367	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      368	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      369	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      370	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      371	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      372	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      373	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      374	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      375	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      376	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      377	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      378	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      379	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      380	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      381	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      382	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      383	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      384	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      385	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      386	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      387	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      388	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      389	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      390	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      391	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      392	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      393	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      394	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      395	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      396	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      397	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      398	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      399	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      400	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      401	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      402	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      403	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      404	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      405	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      406	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      407	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      408	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      409	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      410	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      411	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      412	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      413	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      414	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      415	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      416	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      417	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      418	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      419	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      420	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      421	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      422	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      423	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      424	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      425	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      426	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      427	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      428	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      429	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      430	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      431	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      432	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      433	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      434	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      435	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      436	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      437	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      438	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      439	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      440	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      441	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      442	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      443	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      444	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      445	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      446	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      447	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      448	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      449	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      450	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      451	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      452	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      453	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      454	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      455	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      456	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      457	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      458	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      459	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      460	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      461	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      462	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      463	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      464	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      465	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      466	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      467	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      468	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      469	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      470	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      471	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      472	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      473	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      474	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      475	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      476	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      477	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      478	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      479	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      480	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      481	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      482	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      483	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      484	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      485	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      486	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      487	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      488	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      489	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      490	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      491	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      492	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      493	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      494	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      495	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      496	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      497	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      498	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      499	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      500	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      501	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      502	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      503	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      504	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      505	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      506	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      507	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      508	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      509	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      510	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      511	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      512	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      513	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      514	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      515	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      516	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      517	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      518	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      519	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      520	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      521	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      522	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      523	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      524	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      525	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      526	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
-Cycle:      527	|| Inst at 0x34 (squashed) | blt zero, t1, -24 (squashed) | blt zero, t1, -24       | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       17	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       18	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       19	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       20	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       21	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       22	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       23	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       24	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       25	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       26	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       27	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       28	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       29	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       30	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       31	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       32	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       33	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       34	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       35	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       36	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       37	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       38	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       39	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       40	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       41	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       42	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       43	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       44	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       45	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       46	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       47	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       48	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       49	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       50	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       51	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       52	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       53	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       54	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       55	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       56	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       57	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       58	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       59	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       60	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       61	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       62	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       63	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       64	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       65	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       66	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       67	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       68	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       69	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       70	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       71	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       72	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       73	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       74	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       75	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       76	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       77	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       78	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       79	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       80	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       81	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       82	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       83	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       84	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       85	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       86	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       87	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       88	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       89	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:       90	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:       91	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:       92	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:       93	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:       94	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:       95	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:       96	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:       97	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:       98	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:       99	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:      100	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:      101	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:      102	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:      103	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:      104	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:      105	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:      106	|| Inst at 0x34 (squashed) | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:      107	|| Inst at 0x1c            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:      108	|| Inst at 0x20            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       | NOP                     |
+Cycle:      109	|| Inst at 0x24            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       | blt zero, t1, -24       |
+Cycle:      110	|| Inst at 0x24            | NOP (bubble)            | lw t4, 4(t0)            | lw t3, 0(t0)            | blt zero, t1, -24       |
+Cycle:      111	|| Inst at 0x28            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            | lw t3, 0(t0)            |
+Cycle:      112	|| Inst at 0x2c            | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     | lw t4, 4(t0)            |
+Cycle:      113	|| Inst at 0x30            | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          | NOP                     |
+Cycle:      114	|| Inst at 0x34            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            | add t2, t3, t4          |
+Cycle:      115	|| Inst at 0x34 (spcu)     | NOP (bubble)            | addi t1, t1, -1         | addi t0, t0, 4          | sw t2, 8(t0)            |
+Cycle:      116	|| Inst at 0x38 (spcu)     | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         | addi t0, t0, 4          |
+Cycle:      117	|| Inst at 0x3c            | HALT (spcu)             | blt zero, t1, -24       | NOP                     | addi t1, t1, -1         |
+Cycle:      118	|| Inst at 0x3c (squashed) | ILLEGAL (squashed)      | HALT (spcu)             | blt zero, t1, -24       | NOP                     |
+Cycle:      119	|| Inst at 0x8000          | ILLEGAL                 | ILLEGAL                 | HALT (spcu)             | blt zero, t1, -24       |
+Cycle:      120	|| Inst at 0x8000          | ILLEGAL                 | ILLEGAL                 | HALT (spcu)             | HALT (spcu)             |

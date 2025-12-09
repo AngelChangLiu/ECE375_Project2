@@ -47,7 +47,7 @@ Simulator::Instruction Simulator::simDecode(Instruction inst) {
     inst.rs2    = extractBits(inst.instruction, 24, 20);
     inst.funct7 = extractBits(inst.instruction, 31, 25);
 
-    inst.isLegal = true; // assume legal unless proven otherwise
+    // inst.isLegal = true; // assume legal unless proven otherwise
 
     if (inst.instruction == 0xfeedfeed) {
         inst.isHalt = true;

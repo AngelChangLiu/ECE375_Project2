@@ -32,7 +32,7 @@ class Simulator {
 
         // known by ID
         bool     isHalt = false;
-        bool     isLegal = false;
+        bool     isLegal = true;
         bool     isNop = false;
 
         bool     readsMem = false;

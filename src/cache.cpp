@@ -22,7 +22,7 @@ Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configPa
 // Access method definition
 bool Cache::access(uint64_t address, CacheOperation readWrite)
 {
-    bool hit = true; // Angel changed to true for testing pipeline
+    bool hit = false; // Angel changed to true for testing pipeline
 
     // setting bits to extract fields from address
     uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
@@ -54,7 +54,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
         for (int i = 0; i < config.ways; i++)
         {
             Block currBlock = currentSet.ways[i];
-            if (i = hitIndex)
+            if (i == hitIndex)
                 currBlock.lru = 0;
             else if (currBlock.lru < oldLRU)
                 currBlock.lru++;
@@ -66,7 +66,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
         for (int i = 0; i < config.ways; i++)
         {
             Block currBlock = currentSet.ways[i];
-            if (i = hitIndex)
+            if (i == hitIndex)
             {
                 currBlock.lru = 0;
                 currBlock.isValid = true;
