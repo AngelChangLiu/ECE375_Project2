@@ -57,6 +57,8 @@ private:
 
 public:
     CacheConfig config;
+    bool fetchMiss = false;
+    uint64_t fetchStalls = 0;
     // Constructor to initialize the cache parameters
     Cache(CacheConfig configParam, CacheDataType cacheType);
 

@@ -16,7 +16,16 @@ Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configPa
 {
     // Here you can initialize other cache-specific attributes
     // For instance, if you had cache tables or other structures, initialize them here
-    sets.resize((config.cacheSize / config.blockSize) / config.ways);
+    uint64_t numSets = (config.cacheSize / config.blockSize) / config.ways;
+    sets.resize(numSets);
+    for (uint64_t i = 0; i < numSets; i++) {
+        sets[i].ways.resize(config.ways);
+        for (uint64_t j = 0; j < config.ways; j++) {
+            sets[i].ways[j].isValid = false;
+            sets[i].ways[j].tag = 0;
+            sets[i].ways[j].lru = j;
+        }
+    }
 }
 
 // Access method definition
@@ -27,18 +36,18 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
     // setting bits to extract fields from address
     uint64_t index_bits = log2((config.cacheSize / config.blockSize) / config.ways);
     uint64_t offset_bits = log2(config.blockSize);
-    uint64_t tag_bits = 64 - index_bits - offset_bits;
+    // uint64_t tag_bits = 64 - index_bits - offset_bits;
 
     uint64_t index = (address >> offset_bits) & ((0x1 << index_bits) - 1);
-    uint64_t tag = (address >> offset_bits + index_bits);
+    uint64_t tag = (address >> (offset_bits + index_bits));
 
     // search through set for block that contains tag from address
-    Set currentSet = sets[index];
+    Set& currentSet = sets[index];
     uint64_t oldLRU = 0;
     uint64_t hitIndex = config.ways - 1;
-    for (int i = 0; i < config.ways; i++)
+    for (uint64_t i = 0; i < config.ways; i++)
     {
-        Block currBlock = currentSet.ways[i];
+        Block& currBlock = currentSet.ways[i];
         if (currBlock.isValid && currBlock.tag == tag)
         {
             hit = true;
@@ -48,24 +57,24 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
         }
     }
 
-    // if tag is found, update lru valuves
+    // if tag is found, update lru values
     if (hit)
     {
-        for (int i = 0; i < config.ways; i++)
+        for (uint64_t i = 0; i < config.ways; i++)
         {
-            Block currBlock = currentSet.ways[i];
+            Block& currBlock = currentSet.ways[i];
             if (i == hitIndex)
                 currBlock.lru = 0;
             else if (currBlock.lru < oldLRU)
                 currBlock.lru++;
         }
     }
-    // if tag is not found, update lru valuves
+    // if tag is not found, update lru values
     else
     {
-        for (int i = 0; i < config.ways; i++)
+        for (uint64_t i = 0; i < config.ways; i++)
         {
-            Block currBlock = currentSet.ways[i];
+            Block& currBlock = currentSet.ways[i];
             if (i == hitIndex)
             {
                 currBlock.lru = 0;
