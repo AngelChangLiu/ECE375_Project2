@@ -103,9 +103,6 @@ Status runCycles(uint64_t cycles)
 
         pipeState.cycle = cycleCount;
 
-        count++;
-        cycleCount++;
-
         std::cout << "[DEBUG] Starting cycle " << cycleCount << std::endl;
 
         // Save Previous Cycle Pipeline State
@@ -123,25 +120,15 @@ Status runCycles(uint64_t cycles)
         bool illegalExc = false;
         bool memExc = false;
 
-        if (!instFetchMiss && !dataFetchMiss && !iCache->access(PC, CACHE_READ))
-        {
-            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
-            instFetchMiss = true;
-            instMissStalls = 1;
-        }
-        else if (instFetchMiss) {
-            instMissStalls += 1;
-        } 
-
         CacheOperation operationType = CACHE_READ;
         if (prevEXInst.writesMem)
         {
             operationType = CACHE_WRITE;
         }
-        if (!dataFetchMiss && !prevEXInst.isNop && (prevEXInst.readsMem || prevEXInst.writesMem) && !dCache->access(prevEXInst.memAddress, operationType))        {
+        if (!dataFetchMiss && !prevMEMInst.isNop && (prevMEMInst.readsMem || prevMEMInst.writesMem) && !dCache->access(prevMEMInst.memAddress, operationType))        {
             std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
             dataFetchMiss = true;
-            dataMissStalls = 1;
+            dataMissStalls = 0;
         }
         else if (dataFetchMiss) 
         {
@@ -372,6 +359,11 @@ Status runCycles(uint64_t cycles)
         {
             pipelineInfo.exInst = prevEXInst;
         }
+        else if (instFetchMiss) 
+        {
+            pipelineInfo.exInst = simulator->simEX(prevIDInst);
+            pipelineInfo.idInst = nop(BUBBLE);
+        }
         else 
         {
             pipelineInfo.exInst = simulator->simEX(prevIDInst);
@@ -385,7 +377,9 @@ Status runCycles(uint64_t cycles)
         } 
         else if (stall || instFetchMiss)
         {
-            pipelineInfo.idInst = nop(BUBBLE);
+            std::cout << "[DEBUG] Stall: " << stall << std::endl;
+            std::cout << "[DEBUG] instFetchMiss: " << instFetchMiss << std::endl;
+            if (stall) pipelineInfo.idInst = nop(BUBBLE);
         }
         else
         {
@@ -409,6 +403,17 @@ Status runCycles(uint64_t cycles)
                 taken = true;
             }
         }
+
+        if (!instFetchMiss && !dataFetchMiss && !iCache->access(PC, CACHE_READ))
+        {
+            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
+            std::cout << "[DEBUG] Cache Miss, PC: " << PC << std::endl;
+            instFetchMiss = true;
+            instMissStalls = 0;
+        }
+        else if (instFetchMiss) {
+            instMissStalls += 1;
+        } 
 
         std::cout << "[DEBUG] Fetch Stage, Cycle: " << cycleCount << std::endl;
         // Instruction Fetch Stage
@@ -452,10 +457,13 @@ Status runCycles(uint64_t cycles)
 
             prevIFInst.status = SQUASHED;
             pipelineInfo.ifInst = prevIFInst;
-
             PC = pipelineInfo.idInst.nextPC;
         }
-        else if (instFetchMiss || dataFetchMiss) 
+        else if (instFetchMiss) {
+            pipelineInfo.ifInst = simulator->simIF(PC);
+            std::cout << "[DEBUG] IF InstFetchMiss, PC: " << PC << std::endl;
+        }  
+        else if (dataFetchMiss) 
         {
             pipelineInfo.ifInst = prevIFInst;
             std::cout << "[DEBUG] IF Stall, Cycle: " << cycleCount << std::endl;
@@ -478,12 +486,16 @@ Status runCycles(uint64_t cycles)
             {
                 instMissStalls = 0;
                 instFetchMiss = false;
+                PC += 4;
             }
         if (dataMissStalls >= dCache->config.missLatency)
             {
                 dataMissStalls = 0;
                 dataFetchMiss = false;
             }
+
+        count++;
+        cycleCount++;
     }
 
     // Dump Cache Status:
@@ -517,6 +529,7 @@ Status runTillHalt()
 {
     Status status;
     while (true)
+    // for (int i = 0; i < 15; i++)
     {
         status = static_cast<Status>(runCycles(1));
         if (status == HALT)
