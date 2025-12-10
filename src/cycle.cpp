@@ -119,21 +119,7 @@ Status runCycles(uint64_t cycles)
         // int newStallCycles = 0;
         bool illegalExc = false;
         bool memExc = false;
-
-        CacheOperation operationType = CACHE_READ;
-        if (prevEXInst.writesMem)
-        {
-            operationType = CACHE_WRITE;
-        }
-        if (!dataFetchMiss && !prevMEMInst.isNop && (prevMEMInst.readsMem || prevMEMInst.writesMem) && !dCache->access(prevMEMInst.memAddress, operationType))        {
-            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
-            dataFetchMiss = true;
-            dataMissStalls = 0;
-        }
-        else if (dataFetchMiss) 
-        {
-            dataMissStalls += 1;
-        } 
+ 
         if (remainingStallCycles > 0)
         {
             stall = true;
@@ -306,7 +292,6 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.memInst = simulator->simMEM(prevEXInst);
         }
         
-
         if (pipelineInfo.memInst.memException)
         {
             memExc = true;
@@ -480,6 +465,21 @@ Status runCycles(uint64_t cycles)
             {
                 pipelineInfo.ifInst.status = SPECULATIVE;
             }
+        }
+
+        CacheOperation operationType = CACHE_READ;
+        if (pipelineInfo.memInst.writesMem)
+        {
+            operationType = CACHE_WRITE;
+        }
+        if (!dataFetchMiss && !pipelineInfo.memInst.isNop && (pipelineInfo.memInst.readsMem || pipelineInfo.memInst.writesMem) && !dCache->access(pipelineInfo.memInst.memAddress, operationType))        {
+            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
+            dataFetchMiss = true;
+            dataMissStalls = 0;
+        }
+        else if (dataFetchMiss) 
+        {
+            dataMissStalls += 1;
         }
 
         if (instMissStalls >= iCache->config.missLatency)
