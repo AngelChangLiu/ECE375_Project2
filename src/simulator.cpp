@@ -444,7 +444,7 @@ Simulator::Instruction Simulator::simIF(uint64_t PC) {
 Simulator::Instruction Simulator::simID(Simulator::Instruction inst) {
 
     if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
-        inst.status = NORMAL;
+        // inst.status = NORMAL;
         return inst;
     }
 
@@ -465,7 +465,7 @@ Simulator::Instruction Simulator::simID(Simulator::Instruction inst) {
 
 Simulator::Instruction Simulator::simEX(Simulator::Instruction inst) {
     if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
-        inst.status = NORMAL;
+        // inst.status = NORMAL;
         return inst;
     }
 
@@ -487,7 +487,7 @@ Simulator::Instruction Simulator::simEX(Simulator::Instruction inst) {
 
 Simulator::Instruction Simulator::simMEM(Simulator::Instruction inst) {
     if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
-        inst.status = NORMAL;
+        // inst.status = NORMAL;
         return inst;
     }
 
@@ -505,7 +505,7 @@ Simulator::Instruction Simulator::simMEM(Simulator::Instruction inst) {
 
 Simulator::Instruction Simulator::simWB(Simulator::Instruction inst) {
     if (inst.isNop || inst.status == BUBBLE || inst.status == SQUASHED) {
-        inst.status = NORMAL;
+        // inst.status = NORMAL;
         return inst;
     }
 

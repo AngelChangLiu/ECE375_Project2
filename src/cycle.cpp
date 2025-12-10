@@ -120,118 +120,121 @@ Status runCycles(uint64_t cycles)
         bool illegalExc = false;
         bool memExc = false;
  
-        if (remainingStallCycles > 0)
-        {
-            stall = true;
-            remainingStallCycles--;
-        }
-        else
-        {
-            // Check for data hazards
-            if (isLoad(prevIDInst))
-            {
-                uint64_t loadRd = prevIDInst.rd;
+        // if (remainingStallCycles > 0)
+        // {
+        //     stall = true;
+        //     remainingStallCycles--;
+        // }
+        // else
+        // {
+        //     // Check for data hazards
+        //     if (isLoad(prevIDInst))
+        //     {
+        //         uint64_t loadRd = prevIDInst.rd;
 
-                if (isStore(spec_decode))
-                {
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
-                    {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                }
+        //         if (isStore(spec_decode)) // one-cycle load use
+        //         {
+        //             if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+        //             {
+        //                 stall = true;
+        //                 loadStallCount++;
+        //             }
+        //         }
 
-                else if (isBranchOrJump(spec_decode))
-                {
+        //         else if (isBranchOrJump(spec_decode)) // load-branch stall
+        //         {
 
-                    bool stallRequired = false;
+        //             bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
-                    {
-                        stallRequired = true;
-                    }
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
-                    {
-                        stallRequired = true;
-                    }
+        //             if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+        //             {
+        //                 stallRequired = true;
+        //             }
+        //             if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+        //             {
+        //                 stallRequired = true;
+        //             }
 
-                    if (stallRequired)
-                    {
-                        stall = true;
-                        remainingStallCycles = 1;
-                        loadStallCount++;
-                    }
-                }
+        //             if (stallRequired)
+        //             {
+        //                 stall = true;
+        //                 remainingStallCycles = 1;
+        //                 loadStallCount++;
+        //             }
+        //         }
 
-                else
-                {
+        //         else // one-cycle load-use
+        //         {
 
-                    bool stallRequired = false;
+        //             bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
-                    {
-                        stallRequired = true;
-                    }
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
-                    {
-                        stallRequired = true;
-                    }
+        //             if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+        //             {
+        //                 stallRequired = true;
+        //             }
+        //             if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+        //             {
+        //                 stallRequired = true;
+        //             }
 
-                    if (stallRequired)
-                    {
-                        stall = true;
-                        loadStallCount++;
-                    }
-                }
-            }
+        //             if (stallRequired)
+        //             {
+        //                 stall = true;
+        //                 loadStallCount++;
+        //             }
+        //         }
+        //     }
 
-            if (!stall && isBranchOrJump(spec_decode) && isLoad(prevEXInst))
-            {
-                uint64_t loadRd = prevEXInst.rd;
-                bool stallRequired = false;
+        //     if (!stall && isBranchOrJump(spec_decode) && isLoad(prevEXInst)) // second cycle load-branch stall?
+        //     {
+        //         uint64_t loadRd = prevEXInst.rd;
+        //         bool stallRequired = false;
 
-                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
-                {
-                    stallRequired = true;
-                }
+        //         if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+        //         {
+        //             stallRequired = true;
+        //         }
 
-                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
-                {
-                    stallRequired = true;
-                }
+        //         if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+        //         {
+        //             stallRequired = true;
+        //         }
 
-                if (stallRequired)
-                {
-                    stall = true;
-                    loadStallCount++;
-                }
-            }
+        //         if (stallRequired)
+        //         {
+        //             stall = true;
+        //             loadStallCount++;
+        //         }
+        //     }
 
             // Check for data hazards with branches/jumps
-            if (!stall && isBranchOrJump(spec_decode))
-            {
-                if (writesREG(prevIDInst) && !isLoad(prevIDInst))
-                {
-                    uint64_t aluRd = prevIDInst.rd;
-                    bool stallRequired = false;
+        //     if (!stall && isBranchOrJump(spec_decode))
+        //     {
+        //         if (writesREG(prevIDInst) && !isLoad(prevIDInst))
+        //         {
+        //             uint64_t aluRd = prevIDInst.rd;
+        //             bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && (aluRd != 0))
-                    {
-                        stallRequired = true;
-                    }
+        //             if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && (aluRd != 0))
+        //             {
+        //                 std::cout << "[DEBUG] first conditional: " << std::endl;
+        //                 stallRequired = true;
+        //             }
 
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && (aluRd != 0))
-                    {
-                        stallRequired = true;
-                    }
+        //             if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && (aluRd != 0))
+        //             {
+        //                 std::cout << "[DEBUG] second conditional: " << std::endl;
+        //                 stallRequired = true;
+        //             }
 
-                    if (stallRequired)
-                    {
-                        stall = true;
-                    }
-                }
-            }
-        }
+        //             if (stallRequired)
+        //             {
+        //                 std::cout << "[DEBUG] Stall Required from Branch: " << std::endl;
+        //                 stall = true;
+        //             }
+        //         }
+        //     }
+        // }
 
         std::cout << "[DEBUG] Write-Back Stage, Cycle: " << cycleCount << std::endl;
         // WB Stage:
@@ -349,7 +352,10 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.exInst = simulator->simEX(prevIDInst);
             pipelineInfo.idInst = nop(BUBBLE);
         }
-        else 
+        else if (stall)
+        {
+            pipelineInfo.exInst = nop(BUBBLE);
+        } else 
         {
             pipelineInfo.exInst = simulator->simEX(prevIDInst);
         }
@@ -364,12 +370,126 @@ Status runCycles(uint64_t cycles)
         {
             std::cout << "[DEBUG] Stall: " << stall << std::endl;
             std::cout << "[DEBUG] instFetchMiss: " << instFetchMiss << std::endl;
-            if (stall) pipelineInfo.idInst = nop(BUBBLE);
+            // if (stall) pipelineInfo.idInst = nop(BUBBLE);
         }
         else
         {
             pipelineInfo.idInst = simulator->simID(prevIFInst);
-        }                       
+            if (remainingStallCycles > 0)
+            {
+                stall = true;
+                remainingStallCycles--;
+            }
+            else
+            {
+                // Check for data hazards
+                if (isLoad(pipelineInfo.exInst))
+                {
+                    uint64_t loadRd = pipelineInfo.exInst.rd;
+
+                    if (isStore(pipelineInfo.idInst)) // one-cycle load use
+                    {
+                        if ((pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == loadRd) && (loadRd != 0))
+                        {
+                            stall = true;
+                            loadStallCount++;
+                        }
+                    }
+
+                    else if (isBranchOrJump(pipelineInfo.idInst)) // load-branch stall
+                    {
+
+                        bool stallRequired = false;
+
+                        if ((pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == loadRd) && (loadRd != 0))
+                        {
+                            stallRequired = true;
+                        }
+                        if ((pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == loadRd) && (loadRd != 0))
+                        {
+                            stallRequired = true;
+                        }
+
+                        if (stallRequired)
+                        {
+                            stall = true;
+                            remainingStallCycles = 1;
+                            loadStallCount++;
+                        }
+                    }
+
+                    else // one-cycle load-use
+                    {
+
+                        bool stallRequired = false;
+
+                        if ((pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == loadRd) && (loadRd != 0))
+                        {
+                            stallRequired = true;
+                        }
+                        if ((pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == loadRd) && (loadRd != 0))
+                        {
+                            stallRequired = true;
+                        }
+
+                        if (stallRequired)
+                        {
+                            stall = true;
+                            loadStallCount++;
+                        }
+                    }
+                }
+
+                if (!stall && isBranchOrJump(pipelineInfo.idInst) && isLoad(pipelineInfo.memInst)) // second cycle load-branch stall?
+                {
+                    uint64_t loadRd = pipelineInfo.memInst.rd;
+                    bool stallRequired = false;
+
+                    if ((pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == loadRd) && (loadRd != 0))
+                    {
+                        stallRequired = true;
+                    }
+
+                    if ((pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == loadRd) && (loadRd != 0))
+                    {
+                        stallRequired = true;
+                    }
+
+                    if (stallRequired)
+                    {
+                        stall = true;
+                        loadStallCount++;
+                    }
+                }
+                if (!stall && isBranchOrJump(pipelineInfo.idInst))
+                {
+                    if (writesREG(pipelineInfo.exInst) && !isLoad(pipelineInfo.exInst))
+                    {
+                        uint64_t aluRd = pipelineInfo.exInst.rd;
+                        bool stallRequired = false;
+
+                        if ((pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == aluRd) && (aluRd != 0))
+                        {
+                            std::cout << "[DEBUG] first conditional: " << std::endl;
+                            stallRequired = true;
+                        }
+
+                        if ((pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == aluRd) && (aluRd != 0))
+                        {
+                            std::cout << "[DEBUG] second conditional: " << std::endl;
+                            stallRequired = true;
+                        }
+
+                        if (stallRequired)
+                        {
+                            std::cout << "[DEBUG] Stall Required from Branch: " << std::endl;
+                            stall = true;
+                        }
+                    }
+                }
+            }
+        }
+        
 
         if (!pipelineInfo.idInst.isLegal && !pipelineInfo.idInst.isNop &&
             pipelineInfo.idInst.status != BUBBLE &&
@@ -426,7 +546,7 @@ Status runCycles(uint64_t cycles)
 
             pipelineInfo.ifInst = prevIFInst;
 
-            if (isBranchOrJump(spec_decode))
+            if (isBranchOrJump(pipelineInfo.idInst))
             {
                 pipelineInfo.ifInst.status = SPECULATIVE;
             }
