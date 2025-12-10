@@ -123,44 +123,30 @@ Status runCycles(uint64_t cycles)
         bool illegalExc = false;
         bool memExc = false;
 
-        if (!instFetchMiss && !iCache->access(PC, CACHE_READ))
+        if (!instFetchMiss && !dataFetchMiss && !iCache->access(PC, CACHE_READ))
         {
             std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
-            iCache->incrementMisses();
             instFetchMiss = true;
-            instMissStalls = 0;
+            instMissStalls = 1;
         }
         else if (instFetchMiss) {
             instMissStalls += 1;
-        } else {
-            std::cout << "[DEBUG] Cache Hit, Cycle: " << cycleCount << std::endl;
-            iCache->incrementHits();
-        }
+        } 
 
         CacheOperation operationType = CACHE_READ;
         if (prevEXInst.writesMem)
         {
             operationType = CACHE_WRITE;
         }
-        if (!dataFetchMiss && !prevEXInst.isNop && (prevEXInst.readsMem || prevEXInst.writesMem) && !dCache->access(prevEXInst.memAddress, operationType))
-        {
+        if (!dataFetchMiss && !prevEXInst.isNop && (prevEXInst.readsMem || prevEXInst.writesMem) && !dCache->access(prevEXInst.memAddress, operationType))        {
             std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
-            dCache->incrementMisses();
             dataFetchMiss = true;
-            dataMissStalls = 0;
+            dataMissStalls = 1;
         }
         else if (dataFetchMiss) 
         {
             dataMissStalls += 1;
         } 
-        else if (!(prevEXInst.readsMem || prevEXInst.writesMem)) 
-        {
-            std::cout << "[DEBUG] Cache Hit, Cycle: " << cycleCount << std::endl;
-            dCache->incrementHits();
-        }
-
-
-
         if (remainingStallCycles > 0)
         {
             stall = true;
@@ -397,7 +383,7 @@ Status runCycles(uint64_t cycles)
         {
             pipelineInfo.idInst = prevIDInst;
         } 
-        else if (stall or instFetchMiss)
+        else if (stall || instFetchMiss)
         {
             pipelineInfo.idInst = nop(BUBBLE);
         }
@@ -417,8 +403,7 @@ Status runCycles(uint64_t cycles)
 
         // Check for Branch
         bool taken = false;
-        if ((!stall || !dataFetchMiss) && isBranchOrJump(pipelineInfo.idInst))
-        {
+        if (!stall && !dataFetchMiss && !instFetchMiss && isBranchOrJump(pipelineInfo.idInst))        {
             if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4)
             {
                 taken = true;
@@ -470,7 +455,7 @@ Status runCycles(uint64_t cycles)
 
             PC = pipelineInfo.idInst.nextPC;
         }
-        else if (instFetchMiss or dataFetchMiss) 
+        else if (instFetchMiss || dataFetchMiss) 
         {
             pipelineInfo.ifInst = prevIFInst;
             std::cout << "[DEBUG] IF Stall, Cycle: " << cycleCount << std::endl;
@@ -491,10 +476,12 @@ Status runCycles(uint64_t cycles)
 
         if (instMissStalls >= iCache->config.missLatency)
             {
+                instMissStalls = 0;
                 instFetchMiss = false;
             }
         if (dataMissStalls >= dCache->config.missLatency)
             {
+                dataMissStalls = 0;
                 dataFetchMiss = false;
             }
     }

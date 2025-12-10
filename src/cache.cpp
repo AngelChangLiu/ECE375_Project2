@@ -12,9 +12,7 @@ static std::mt19937 generator(42); // Fixed seed for deterministic results
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 // Constructor definition
-Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : config(configParam)
-{
-    // Here you can initialize other cache-specific attributes
+Cache::Cache(CacheConfig configParam, CacheDataType cacheType) : hits(0), misses(0), type(cacheType), config(configParam){    // Here you can initialize other cache-specific attributes
     // For instance, if you had cache tables or other structures, initialize them here
     uint64_t numSets = (config.cacheSize / config.blockSize) / config.ways;
     sets.resize(numSets);
@@ -72,16 +70,36 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
     // if tag is not found, update lru values
     else
     {
+        // Find the LRU block
+        uint64_t maxLRU = 0;
+        uint64_t victimIndex = 0;
         for (uint64_t i = 0; i < config.ways; i++)
         {
             Block& currBlock = currentSet.ways[i];
-            if (i == hitIndex)
+            if (!currBlock.isValid) {
+                // Use invalid block first
+                victimIndex = i;
+                maxLRU = currBlock.lru;
+                break;
+            }
+            if (currBlock.lru >= maxLRU)
+            {
+                maxLRU = currBlock.lru;
+                victimIndex = i;
+            }
+        }
+
+        // Update LRU values
+        for (uint64_t i = 0; i < config.ways; i++)
+        {
+            Block& currBlock = currentSet.ways[i];
+            if (i == victimIndex)
             {
                 currBlock.lru = 0;
                 currBlock.isValid = true;
                 currBlock.tag = tag;
             }
-            else if (currBlock.lru < oldLRU)
+            else if (currBlock.lru < maxLRU)
                 currBlock.lru++;
         }
     }
