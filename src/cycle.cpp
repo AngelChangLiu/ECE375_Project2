@@ -38,6 +38,8 @@ Simulator::Instruction nop(StageStatus status)
     return nopInst;
 }
 
+// DO NOT use default member initializers that call functions!
+// Static initialization order is undefined in C++
 static struct PipelineInfo
 {
     Simulator::Instruction ifInst;
@@ -64,6 +66,7 @@ Status initSimulator(CacheConfig &iCacheConfig, CacheConfig &dCacheConfig, Memor
     dCacheStallCycles = 0;
     haltInPipeline = false;
     
+    // Initialize pipeline with IDLE NOPs here, not in static initialization
     pipelineInfo.ifInst = nop(IDLE);
     pipelineInfo.idInst = nop(IDLE);
     pipelineInfo.exInst = nop(IDLE);
@@ -230,11 +233,13 @@ Status runCycles(uint64_t cycles)
         else
             pipelineInfo.wbInst = simulator->simWB(prevMEM);
 
-        // Only return HALT when the actual halt instruction (0xfeedfeed) reaches WB
-        // and it's not a NOP/bubble/squashed instruction
-        if (pipelineInfo.wbInst.isHalt && !pipelineInfo.wbInst.isNop &&
-            pipelineInfo.wbInst.status != BUBBLE && pipelineInfo.wbInst.status != SQUASHED &&
-            pipelineInfo.wbInst.status != IDLE && pipelineInfo.wbInst.instruction == 0xfeedfeed) {
+        // CRITICAL FIX: Only return HALT when the actual halt instruction (0xfeedfeed) reaches WB
+        // Check instruction word directly to avoid any isHalt flag issues
+        if (pipelineInfo.wbInst.instruction == 0xfeedfeed && 
+            pipelineInfo.wbInst.status != BUBBLE && 
+            pipelineInfo.wbInst.status != SQUASHED &&
+            pipelineInfo.wbInst.status != IDLE) {
+            pipeState.cycle = cycleCount;
             pipeState.ifPC = pipelineInfo.ifInst.PC;
             pipeState.ifStatus = pipelineInfo.ifInst.status;
             pipeState.idInstr = pipelineInfo.idInst.instruction;
@@ -282,7 +287,7 @@ Status runCycles(uint64_t cycles)
         else if (prevID.status == IDLE)
             pipelineInfo.exInst = nop(IDLE);  // Preserve IDLE during pipeline fill
         else
-            pipelineInfo.exInst = simulator->simEX(prevID);  // prevID always proceeds to EX
+            pipelineInfo.exInst = simulator->simEX(prevID);
 
         // ID Stage - on hazard stall, insert bubble (instruction in IF can't proceed)
         if (dCacheStalling)
@@ -291,7 +296,7 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.idInst = nop(BUBBLE);  // Hazard stall: bubble because IF can't send instruction
         else if (iCacheStalling)
             pipelineInfo.idInst = nop(BUBBLE);
-        else if (prevIF.status == IDLE || (prevIF.isNop && prevIF.status == IDLE))
+        else if (prevIF.status == IDLE)
             pipelineInfo.idInst = nop(IDLE);  // Keep IDLE status during pipeline fill
         else
             pipelineInfo.idInst = simulator->simID(prevIF);
@@ -342,7 +347,7 @@ Status runCycles(uint64_t cycles)
                     extractBits(imm5, 4, 1) << 1 |
                     extractBits(imm5, 0, 0) << 11,
                     12);
-                uint64_t branchTarget = pipelineInfo.idInst.PC + branchOffset;
+                uint64_t brTarget = pipelineInfo.idInst.PC + branchOffset;
                 
                 bool taken = false;
                 switch (pipelineInfo.idInst.funct3) {
@@ -353,7 +358,7 @@ Status runCycles(uint64_t cycles)
                     case 6: taken = (pipelineInfo.idInst.op1Val < pipelineInfo.idInst.op2Val); break; // BLTU
                     case 7: taken = (pipelineInfo.idInst.op1Val >= pipelineInfo.idInst.op2Val); break; // BGEU
                 }
-                pipelineInfo.idInst.nextPC = taken ? branchTarget : (pipelineInfo.idInst.PC + 4);
+                pipelineInfo.idInst.nextPC = taken ? brTarget : (pipelineInfo.idInst.PC + 4);
             }
         }
 
@@ -365,9 +370,8 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.idInst.status = SQUASHED;
         }
 
-        if (pipelineInfo.idInst.isHalt && !pipelineInfo.idInst.isNop &&
-            pipelineInfo.idInst.status != BUBBLE && pipelineInfo.idInst.status != SQUASHED &&
-            pipelineInfo.idInst.status != IDLE && pipelineInfo.idInst.instruction == 0xfeedfeed)
+        // Only set haltInPipeline when we see the actual halt instruction
+        if (pipelineInfo.idInst.instruction == 0xfeedfeed)
             haltInPipeline = true;
 
         // Branch resolution
