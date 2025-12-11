@@ -111,7 +111,6 @@ Status runCycles(uint64_t cycles)
         // D-CACHE HANDLING
         // =================================================================
         bool dCacheStalling = false;
-        bool dCacheFirstStallCycle = false;
         
         if (dCacheStallCycles > 0)
         {
