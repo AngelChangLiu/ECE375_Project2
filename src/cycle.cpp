@@ -225,10 +225,16 @@ Status runCycles(uint64_t cycles)
         // WB Stage
         if (dCacheStalling)
             pipelineInfo.wbInst = nop(BUBBLE);
+        else if (prevMEM.status == IDLE)
+            pipelineInfo.wbInst = nop(IDLE);  // Preserve IDLE during pipeline fill
         else
             pipelineInfo.wbInst = simulator->simWB(prevMEM);
 
-        if (pipelineInfo.wbInst.isHalt) {
+        // Only return HALT when the actual halt instruction (0xfeedfeed) reaches WB
+        // and it's not a NOP/bubble/squashed instruction
+        if (pipelineInfo.wbInst.isHalt && !pipelineInfo.wbInst.isNop &&
+            pipelineInfo.wbInst.status != BUBBLE && pipelineInfo.wbInst.status != SQUASHED &&
+            pipelineInfo.wbInst.status != IDLE && pipelineInfo.wbInst.instruction == 0xfeedfeed) {
             pipeState.ifPC = pipelineInfo.ifInst.PC;
             pipeState.ifStatus = pipelineInfo.ifInst.status;
             pipeState.idInstr = pipelineInfo.idInst.instruction;
@@ -247,6 +253,8 @@ Status runCycles(uint64_t cycles)
         // MEM Stage
         if (dCacheStalling)
             pipelineInfo.memInst = prevMEM;  // Keep instruction in MEM during stall
+        else if (prevEX.status == IDLE)
+            pipelineInfo.memInst = nop(IDLE);  // Preserve IDLE during pipeline fill
         else
         {
             pipelineInfo.memInst = simulator->simMEM(prevEX);
@@ -271,6 +279,8 @@ Status runCycles(uint64_t cycles)
         // EX Stage
         if (dCacheStalling)
             pipelineInfo.exInst = prevEX;
+        else if (prevID.status == IDLE)
+            pipelineInfo.exInst = nop(IDLE);  // Preserve IDLE during pipeline fill
         else
             pipelineInfo.exInst = simulator->simEX(prevID);  // prevID always proceeds to EX
 
@@ -281,6 +291,8 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.idInst = nop(BUBBLE);  // Hazard stall: bubble because IF can't send instruction
         else if (iCacheStalling)
             pipelineInfo.idInst = nop(BUBBLE);
+        else if (prevIF.status == IDLE || (prevIF.isNop && prevIF.status == IDLE))
+            pipelineInfo.idInst = nop(IDLE);  // Keep IDLE status during pipeline fill
         else
             pipelineInfo.idInst = simulator->simID(prevIF);
         
@@ -353,7 +365,9 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.idInst.status = SQUASHED;
         }
 
-        if (pipelineInfo.idInst.isHalt)
+        if (pipelineInfo.idInst.isHalt && !pipelineInfo.idInst.isNop &&
+            pipelineInfo.idInst.status != BUBBLE && pipelineInfo.idInst.status != SQUASHED &&
+            pipelineInfo.idInst.status != IDLE && pipelineInfo.idInst.instruction == 0xfeedfeed)
             haltInPipeline = true;
 
         // Branch resolution
