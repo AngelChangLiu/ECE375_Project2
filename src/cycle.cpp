@@ -29,10 +29,11 @@ static bool haltInPipeline = false;
 
 Simulator::Instruction nop(StageStatus status)
 {
-    Simulator::Instruction nopInst;
+    Simulator::Instruction nopInst = {};  // Zero-initialize all fields
     nopInst.instruction = 0x00000013;
     nopInst.isLegal = true;
     nopInst.isNop = true;
+    nopInst.isHalt = false;  // Explicitly set to false
     nopInst.status = status;
     return nopInst;
 }
