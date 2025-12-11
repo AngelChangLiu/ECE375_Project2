@@ -107,42 +107,45 @@ Status runCycles(uint64_t cycles)
         bool memException = false;
         uint64_t branchTarget = 0;
 
+        // =================================================================
         // D-CACHE HANDLING
+        // =================================================================
         bool dCacheStalling = false;
+        bool dCacheFirstStallCycle = false;
         
         if (dCacheStallCycles > 0)
         {
-            // Currently in D-cache miss stall
+            // Currently in D-cache miss stall (instruction is stuck in MEM)
             dCacheStallCycles--;
             dCacheStalling = true;
         }
-        else if (isMemoryInst(prevEX))
-        {
-            // Check if new memory access misses
-            CacheOperation op = prevEX.writesMem ? CACHE_WRITE : CACHE_READ;
-            if (!dCache->access(prevEX.memAddress, op))
-            {
-                dCacheStallCycles = dCache->config.missLatency;
-                if (dCacheStallCycles > 0) {
-                    dCacheStallCycles--;  // This cycle counts as first stall
-                    dCacheStalling = true;
-                }
-            }
-        }
+        // Note: We check for new D-cache miss in the MEM stage processing below
+        // The miss is detected when instruction enters MEM, stall starts next cycle
 
+        // =================================================================
         // I-CACHE HANDLING
+        // =================================================================
         bool iCacheStalling = false;
         
-        if (!dCacheStalling)
+        // I-cache stall counter decrements even during D-cache stall
+        // (the cache miss penalty runs in parallel)
+        if (iCacheStallCycles > 0)
         {
-            if (iCacheStallCycles > 0)
-            {
-                iCacheStallCycles--;
+            iCacheStallCycles--;
+            if (!dCacheStalling)  // Only affects pipeline if not D-cache stalling
                 iCacheStalling = true;
+            else if (iCacheStallCycles == 0)
+            {
+                // I-cache stall ended during D-cache stall - advance PC
+                PC += 4;
             }
         }
+        // Note: We check for new I-cache miss AFTER processing current IF->ID
+        // This is handled at the end when we try to fetch the next instruction
 
+        // =================================================================
         // HAZARD DETECTION
+        // =================================================================
         Simulator::Instruction specDecode;
         // Only check hazards when instruction can actually proceed from IF to ID
         bool canCheckHazards = !dCacheStalling && !iCacheStalling && 
@@ -195,7 +198,9 @@ Status runCycles(uint64_t cycles)
             }
         }
 
+        // =================================================================
         // FORWARDING
+        // =================================================================
         if (writesReg(prevMEM)) {
             uint64_t rd = prevMEM.rd;
             uint64_t val = isLoad(prevMEM) ? prevMEM.memResult : prevMEM.arithResult;
@@ -213,7 +218,9 @@ Status runCycles(uint64_t cycles)
                 prevEX.op2Val = isLoad(prevMEM) ? prevMEM.memResult : prevMEM.arithResult;
         }
 
+        // =================================================================
         // PIPELINE STAGES
+        // =================================================================
 
         // WB Stage
         if (dCacheStalling)
@@ -239,9 +246,22 @@ Status runCycles(uint64_t cycles)
 
         // MEM Stage
         if (dCacheStalling)
-            pipelineInfo.memInst = prevMEM;
+            pipelineInfo.memInst = prevMEM;  // Keep instruction in MEM during stall
         else
+        {
             pipelineInfo.memInst = simulator->simMEM(prevEX);
+            
+            // Check for D-cache miss when memory instruction enters MEM
+            if (isMemoryInst(pipelineInfo.memInst))
+            {
+                CacheOperation op = pipelineInfo.memInst.writesMem ? CACHE_WRITE : CACHE_READ;
+                if (!dCache->access(pipelineInfo.memInst.memAddress, op))
+                {
+                    // Cache miss - stall will start next cycle
+                    dCacheStallCycles = dCache->config.missLatency;
+                }
+            }
+        }
 
         if (pipelineInfo.memInst.memException) {
             memException = true;
@@ -256,13 +276,74 @@ Status runCycles(uint64_t cycles)
 
         // ID Stage - on hazard stall, insert bubble (instruction in IF can't proceed)
         if (dCacheStalling)
-            pipelineInfo.idInst = prevID;
+            pipelineInfo.idInst = prevID;  // D-cache stall: keep instruction in ID
         else if (stallPipeline)
-            pipelineInfo.idInst = nop(BUBBLE);  // Bubble because IF can't send instruction
+            pipelineInfo.idInst = nop(BUBBLE);  // Hazard stall: bubble because IF can't send instruction
         else if (iCacheStalling)
             pipelineInfo.idInst = nop(BUBBLE);
         else
             pipelineInfo.idInst = simulator->simID(prevIF);
+        
+        // =================================================================
+        // FORWARDING FOR BRANCHES in ID
+        // =================================================================
+        // After decoding, forward values to the newly decoded instruction
+        // This is needed for branches which evaluate their condition in ID
+        if (!pipelineInfo.idInst.isNop && pipelineInfo.idInst.status != BUBBLE &&
+            isBranchOrJump(pipelineInfo.idInst)) {
+            // Forward from prevID (just went to EX this cycle)
+            if (writesReg(prevID)) {
+                uint64_t rd = prevID.rd;
+                uint64_t val = prevID.arithResult;
+                if (pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == rd && rd != 0) 
+                    pipelineInfo.idInst.op1Val = val;
+                if (pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == rd && rd != 0) 
+                    pipelineInfo.idInst.op2Val = val;
+            }
+            // Forward from prevEX (now in MEM)
+            if (writesReg(prevEX)) {
+                uint64_t rd = prevEX.rd;
+                uint64_t val = prevEX.arithResult;
+                if (pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == rd && rd != 0) 
+                    pipelineInfo.idInst.op1Val = val;
+                if (pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == rd && rd != 0) 
+                    pipelineInfo.idInst.op2Val = val;
+            }
+            // Forward from prevMEM (now in WB)
+            if (writesReg(prevMEM)) {
+                uint64_t rd = prevMEM.rd;
+                uint64_t val = isLoad(prevMEM) ? prevMEM.memResult : prevMEM.arithResult;
+                if (pipelineInfo.idInst.readsRs1 && pipelineInfo.idInst.rs1 == rd && rd != 0) 
+                    pipelineInfo.idInst.op1Val = val;
+                if (pipelineInfo.idInst.readsRs2 && pipelineInfo.idInst.rs2 == rd && rd != 0) 
+                    pipelineInfo.idInst.op2Val = val;
+            }
+            
+            // Re-evaluate branch condition with forwarded values
+            if (pipelineInfo.idInst.opcode == OP_BRANCH) {
+                // Calculate branch target from instruction encoding
+                uint64_t imm5 = pipelineInfo.idInst.rd;
+                uint64_t imm7 = pipelineInfo.idInst.funct7;
+                uint64_t branchOffset = sext64(
+                    extractBits(imm7, 6, 6) << 12 |
+                    extractBits(imm7, 5, 0) << 5 |
+                    extractBits(imm5, 4, 1) << 1 |
+                    extractBits(imm5, 0, 0) << 11,
+                    12);
+                uint64_t branchTarget = pipelineInfo.idInst.PC + branchOffset;
+                
+                bool taken = false;
+                switch (pipelineInfo.idInst.funct3) {
+                    case 0: taken = (pipelineInfo.idInst.op1Val == pipelineInfo.idInst.op2Val); break; // BEQ
+                    case 1: taken = (pipelineInfo.idInst.op1Val != pipelineInfo.idInst.op2Val); break; // BNE
+                    case 4: taken = ((int64_t)pipelineInfo.idInst.op1Val < (int64_t)pipelineInfo.idInst.op2Val); break; // BLT
+                    case 5: taken = ((int64_t)pipelineInfo.idInst.op1Val >= (int64_t)pipelineInfo.idInst.op2Val); break; // BGE
+                    case 6: taken = (pipelineInfo.idInst.op1Val < pipelineInfo.idInst.op2Val); break; // BLTU
+                    case 7: taken = (pipelineInfo.idInst.op1Val >= pipelineInfo.idInst.op2Val); break; // BGEU
+                }
+                pipelineInfo.idInst.nextPC = taken ? branchTarget : (pipelineInfo.idInst.PC + 4);
+            }
+        }
 
         // Exception check
         if (!pipelineInfo.idInst.isLegal && !pipelineInfo.idInst.isNop &&
