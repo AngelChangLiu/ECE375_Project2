@@ -17,6 +17,8 @@ static uint64_t cycleCount = 0;
 static uint64_t loadStallCount = 0;
 // completed instruction count
 static uint64_t completedCount = 0;
+// last instruction cache PC
+static uint64_t prevICPC = (uint16_t)-1;
 // remaining stall cycles
 static uint64_t remainingStallCycles = 0;
 static uint64_t PC = 0;
@@ -24,7 +26,8 @@ static uint64_t PC = 0;
 // Exception Address
 #define EXC_HANDLER 0x8000
 
-/**TODO: Implement pipeline simulation for the RISCV machine in this file.
+/*
+*TODO: Implement pipeline simulation for the RISCV machine in this file.
  * A basic template is provided below that doesn't account for any hazards.
  */
 
@@ -143,27 +146,16 @@ Status runCycles(uint64_t cycles)
         {
             operationType = CACHE_WRITE;
         }
-        if (!dataFetchMiss && !prevMEMInst.isNop && (prevMEMInst.readsMem || prevMEMInst.writesMem) && !dCache->access(prevMEMInst.memAddress, operationType))
+
+        if (!dataFetchMiss && (isLoad(prevMEMInst) || isStore(prevMEMInst)) &&
+            !dCache->access(prevMEMInst.memAddress, operationType))
         {
-            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
             dataFetchMiss = true;
             dataMissStalls = 0;
         }
         else if (dataFetchMiss)
         {
             dataMissStalls += 1;
-        }
-
-        if (!instFetchMiss && !prevIFInst.isNop && !iCache->access(prevIFInst.PC, CACHE_READ))
-        {
-            std::cout << "[DEBUG] Instuction Cache Miss, Cycle: " << cycleCount << std::endl;
-            std::cout << "[DEBUG] Instuction Cache Miss, PC: " << prevIFInst.PC << std::endl;
-            instFetchMiss = true;
-            instMissStalls = 0;
-        }
-        else if (instFetchMiss)
-        {
-            instMissStalls += 1;
         }
 
         if (remainingStallCycles > 0)
@@ -259,6 +251,28 @@ Status runCycles(uint64_t cycles)
             }
         }
 
+        if (!stall && !instFetchMiss && !prevIFInst.isNop)
+        {
+            if (prevIFInst.PC != prevICPC)
+            {
+                prevICPC = prevIFInst.PC;
+
+                if (!iCache->access(prevIFInst.PC, CACHE_READ))
+                {
+                
+                    std::cout << "[DEBUG] Instruction Cache Miss, Cycle: " << cycleCount << std::endl;
+                    std::cout << "[DEBUG] Instruction Cache Miss, PC: " << prevIFInst.PC << std::endl;
+
+                    instFetchMiss = true;
+                    instMissStalls = 0;
+                }
+            }
+        }
+        else if (instFetchMiss)
+        {
+            instMissStalls += 1;
+        }
+
         std::cout << "[DEBUG] Write-Back Stage, Cycle: " << cycleCount << std::endl;
         // WB Stage:
         if (dataFetchMiss)
@@ -273,8 +287,7 @@ Status runCycles(uint64_t cycles)
         if (!pipelineInfo.wbInst.isNop &&
             pipelineInfo.wbInst.isLegal &&
             pipelineInfo.wbInst.status != BUBBLE &&
-            pipelineInfo.wbInst.status != SQUASHED &&
-            !pipelineInfo.wbInst.isHalt)
+            pipelineInfo.wbInst.status != SQUASHED)
         {
             completedCount++;
         }
@@ -626,7 +639,6 @@ Status runTillHalt()
 // dump the state of the simulator
 Status finalizeSimulator()
 {
-    simulator->dumpRegMem(output);
     SimulationStats stats{
         completedCount,
         cycleCount,
@@ -636,5 +648,6 @@ Status finalizeSimulator()
         dCache->getMisses(),
         loadStallCount};
     dumpSimStats(stats, output);
+    simulator->dumpRegMem(output);
     return SUCCESS;
 }
