@@ -21,6 +21,12 @@ static uint64_t completedCount = 0;
 static uint64_t prevICPC = (uint16_t)-1;
 // remaining stall cycles
 static uint64_t remainingStallCycles = 0;
+// previous data valid flag
+static bool prevDValid = false;
+// previous data address
+static uint64_t prevDAddr = 0;
+// previous data cache operation
+static CacheOperation prevDOp = CACHE_READ;
 static uint64_t PC = 0;
 
 // Exception Address
@@ -141,17 +147,30 @@ Status runCycles(uint64_t cycles)
         //         std::cout << "[DEBUG] HALT: " << cycleCount << std::endl;
         //     }
 
-        CacheOperation operationType = CACHE_READ;
+        CacheOperation opType = CACHE_READ;
         if (prevMEMInst.writesMem)
         {
-            operationType = CACHE_WRITE;
+            opType = CACHE_WRITE;
         }
 
-        if (!dataFetchMiss && (isLoad(prevMEMInst) || isStore(prevMEMInst)) &&
-            !dCache->access(prevMEMInst.memAddress, operationType))
+        CacheOperation operationType = CACHE_READ;
+        if (prevMEMInst.writesMem) opType = CACHE_WRITE;
+
+        if (!dataFetchMiss && (isLoad(prevMEMInst) || isStore(prevMEMInst)))
         {
-            dataFetchMiss = true;
-            dataMissStalls = 0;
+            // only access dCache if the address or operation type has changed in MEM instr 
+            if (!prevDValid || prevMEMInst.memAddress != prevDAddr || opType != prevDOp)
+            {
+                prevDValid = true;
+                prevDAddr  = prevMEMInst.memAddress;
+                prevDOp    = opType;
+
+                if (!dCache->access(prevMEMInst.memAddress, opType))
+                {
+                    dataFetchMiss = true;
+                    dataMissStalls = 0;
+                }
+            }
         }
         else if (dataFetchMiss)
         {
