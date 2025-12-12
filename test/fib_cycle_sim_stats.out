@@ -1,6 +1,6 @@
-Dynamic instructions:  237
-Total cycles:          167
-I-cache hits:          114
+Dynamic instructions:  95
+Total cycles:          163
+I-cache hits:          142
 I-cache misses:        5
 D-cache hits:          36
 D-cache misses:        4

@@ -38,7 +38,7 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
 
     uint64_t index = (address >> offset_bits) & ((0x1 << index_bits) - 1);
     uint64_t tag = (address >> (offset_bits + index_bits));
-    if (address == 0x0 || address == 0xc) {
+    if (address == 0x20) {
         std::cout << "[DEBUG] addr: " << address << std::endl;
         std::cout << "[DEBUG] tag: " << tag << std::endl;
         std::cout << "[DEBUG] index: " << index << std::endl;
@@ -57,8 +57,8 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
             hit = true;
             hitIndex = i;
             oldLRU = currBlock.lru;
-            if (address == 0xc) {
-                std::cout << "[DEBUG] hit: " << hit << std::endl;
+            if (address == 0x20) {
+                std::cout << "[DEBUG] hit: " << address << std::endl;
             }
             break;
         }
@@ -79,6 +79,9 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
     // if tag is not found, update lru values
     else
     {
+         if (address == 0x20) {
+                std::cout << "[DEBUG] miss: " << address << std::endl;
+        }
         // Find the LRU block
         uint64_t maxLRU = 0;
         uint64_t victimIndex = 0;

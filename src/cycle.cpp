@@ -113,7 +113,7 @@ Status runCycles(uint64_t cycles)
         // Simulator::Instruction prevWBInst = pipelineInfo.wbInst;
 
         // Speculative Decode
-        Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
+        // Simulator::Instruction spec_decode = simulator->simID(prevIFInst);
 
         bool stall = false;
         // int newStallCycles = 0;
@@ -121,11 +121,12 @@ Status runCycles(uint64_t cycles)
         bool memExc = false;
 
         CacheOperation operationType = CACHE_READ;
-        if (prevEXInst.writesMem)
+        if (prevMEMInst.writesMem)
         {
             operationType = CACHE_WRITE;
         }
-        if (!dataFetchMiss && !prevMEMInst.isNop && (prevMEMInst.readsMem || prevMEMInst.writesMem) && !dCache->access(prevMEMInst.memAddress, operationType))        {
+        if (!dataFetchMiss && !prevMEMInst.isNop && (prevMEMInst.readsMem || prevMEMInst.writesMem) && !dCache->access(prevMEMInst.memAddress, operationType))
+        {
             std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
             dataFetchMiss = true;
             dataMissStalls = 0;
@@ -134,6 +135,19 @@ Status runCycles(uint64_t cycles)
         {
             dataMissStalls += 1;
         }
+
+        if (!instFetchMiss && !prevIFInst.isNop && !iCache->access(prevIFInst.PC, CACHE_READ))
+        {
+            std::cout << "[DEBUG] Instuction Cache Miss, Cycle: " << cycleCount << std::endl;
+            std::cout << "[DEBUG] Instuction Cache Miss, PC: " << prevIFInst.PC << std::endl;
+            instFetchMiss = true;
+            instMissStalls = 0;
+        }
+        else if (instFetchMiss)
+        {
+            instMissStalls += 1;
+        }
+
         if (remainingStallCycles > 0)
         {
             stall = true;
@@ -142,29 +156,31 @@ Status runCycles(uint64_t cycles)
         else
         {
             // Check for data hazards
-            if (isLoad(prevIDInst))
+            // LOAD-USE:
+            if (isLoad(prevEXInst))
             {
-                uint64_t loadRd = prevIDInst.rd;
+                uint64_t loadRd = prevEXInst.rd;
 
-                if (isStore(spec_decode))
+                if (isStore(prevIDInst))
                 {
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                    if ((prevIDInst.readsRs1 && prevIDInst.rs1 == loadRd) && (loadRd != 0))
                     {
                         stall = true;
                         loadStallCount++;
                     }
                 }
 
-                else if (isBranchOrJump(spec_decode))
+                // LOAD_BRANCH:
+                else if (isBranchOrJump(prevIDInst))
                 {
 
                     bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                    if ((prevIDInst.readsRs1 && prevIDInst.rs1 == loadRd) && (loadRd != 0))
                     {
                         stallRequired = true;
                     }
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+                    if ((prevIDInst.readsRs2 && prevIDInst.rs2 == loadRd) && (loadRd != 0))
                     {
                         stallRequired = true;
                     }
@@ -182,11 +198,11 @@ Status runCycles(uint64_t cycles)
 
                     bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                    if ((prevIDInst.readsRs1 && prevIDInst.rs1 == loadRd) && (loadRd != 0))
                     {
                         stallRequired = true;
                     }
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
+                    if ((prevIDInst.readsRs2 && prevIDInst.rs2 == loadRd) && (loadRd != 0))
                     {
                         stallRequired = true;
                     }
@@ -199,42 +215,20 @@ Status runCycles(uint64_t cycles)
                 }
             }
 
-            if (!stall && isBranchOrJump(spec_decode) && isLoad(prevEXInst))
+            // ARITHMETIC-BRANCH
+            if (!stall && isBranchOrJump(prevIDInst))
             {
-                uint64_t loadRd = prevEXInst.rd;
-                bool stallRequired = false;
-
-                if ((spec_decode.readsRs1 && spec_decode.rs1 == loadRd) && (loadRd != 0))
+                if (writesREG(prevEXInst) && !isLoad(prevEXInst))
                 {
-                    stallRequired = true;
-                }
-
-                if ((spec_decode.readsRs2 && spec_decode.rs2 == loadRd) && (loadRd != 0))
-                {
-                    stallRequired = true;
-                }
-
-                if (stallRequired)
-                {
-                    stall = true;
-                    loadStallCount++;
-                }
-            }
-
-            // Check for data hazards with branches/jumps
-            if (!stall && isBranchOrJump(spec_decode))
-            {
-                if (writesREG(prevIDInst) && !isLoad(prevIDInst))
-                {
-                    uint64_t aluRd = prevIDInst.rd;
+                    uint64_t aluRd = prevEXInst.rd;
                     bool stallRequired = false;
 
-                    if ((spec_decode.readsRs1 && spec_decode.rs1 == aluRd) && (aluRd != 0))
+                    if ((prevIDInst.readsRs1 && prevIDInst.rs1 == aluRd) && (aluRd != 0))
                     {
                         stallRequired = true;
                     }
 
-                    if ((spec_decode.readsRs2 && spec_decode.rs2 == aluRd) && (aluRd != 0))
+                    if ((prevIDInst.readsRs2 && prevIDInst.rs2 == aluRd) && (aluRd != 0))
                     {
                         stallRequired = true;
                     }
@@ -299,13 +293,11 @@ Status runCycles(uint64_t cycles)
         if (dataFetchMiss)
         {
             pipelineInfo.memInst = prevMEMInst;
-
         }
         else
         {
             pipelineInfo.memInst = simulator->simMEM(prevEXInst);
         }
-
 
         if (pipelineInfo.memInst.memException)
         {
@@ -353,36 +345,75 @@ Status runCycles(uint64_t cycles)
             }
         }
 
+        // // Forward from EX → ID
+        // if (writesREG(prevEXInst) && isBranchOrJump(prevIDInst))
+        // {
+        //     uint64_t exRd = prevEXInst.rd;
+        //     // if the prev ID is a branch and the mem instruction reads or writes to a reg that the branch needs, forward it to ID 
+        //     if (prevIDInst.readsRs1 && prevIDInst.rs1 == exRd && exRd != 0)
+        //     {
+        //         prevIDInst.op1Val = prevEXInst.arithResult;
+        //     }
+        //     if (prevIDInst.readsRs2 && prevIDInst.rs2 == exRd && exRd != 0)
+        //     {
+        //         prevIDInst.op2Val = prevEXInst.arithResult;
+        //     }
+        // }
+
         std::cout << "[DEBUG] Execute Stage, Cycle: " << cycleCount << std::endl;
         // EX Stage:
         if (dataFetchMiss)
         {
             pipelineInfo.exInst = prevEXInst;
         }
-        else if (instFetchMiss)
+        else if (stall)
         {
-            pipelineInfo.exInst = simulator->simEX(prevIDInst);
-            pipelineInfo.idInst = nop(BUBBLE);
+            pipelineInfo.exInst = nop(BUBBLE);
         }
         else
         {
             pipelineInfo.exInst = simulator->simEX(prevIDInst);
         }
+        // else if (instFetchMiss)
+        // {
+        //     pipelineInfo.exInst = simulator->simEX(prevIDInst);
+        //     pipelineInfo.idInst = nop(BUBBLE);
+        // }
 
         std::cout << "[DEBUG] Decode Stage, Cycle: " << cycleCount << std::endl;
         // ID Stage:
         if (dataFetchMiss)
         {
+            std::cout << "[DEBUG] dataFetchMiss: " << dataFetchMiss << std::endl;
             pipelineInfo.idInst = prevIDInst;
         }
-        else if (stall || instFetchMiss)
+        else if (stall)
         {
             std::cout << "[DEBUG] Stall: " << stall << std::endl;
+            if (isBranchOrJump(prevIDInst)) {
+                pipelineInfo.idInst = simulator->simID(prevIDInst);
+            }
+            else
+            {
+                pipelineInfo.idInst = prevIDInst;
+            }
+            // if whati s being stalled is a branch instruction, re compute outcome
+        }
+        else if (instFetchMiss)
+        {
             std::cout << "[DEBUG] instFetchMiss: " << instFetchMiss << std::endl;
-            if (stall) pipelineInfo.idInst = nop(BUBBLE);
+            pipelineInfo.idInst = nop(BUBBLE);
+        }
+        else if (prevIFInst.status == SPECULATIVE && prevIFInst.PC != (PC - 4))
+        {
+            pipelineInfo.idInst = nop(SQUASHED);
         }
         else
         {
+            if (!prevIFInst.isNop && !(prevIFInst.status == BUBBLE) && !(prevIFInst.status == SQUASHED) && !(prevIFInst.status == IDLE))
+            {
+                prevIFInst.status = NORMAL;
+            }
             pipelineInfo.idInst = simulator->simID(prevIFInst);
         }
 
@@ -396,23 +427,17 @@ Status runCycles(uint64_t cycles)
         }
 
         // Check for Branch
+        bool branchInId = false;
         bool taken = false;
-        if (!stall && !dataFetchMiss && !instFetchMiss && isBranchOrJump(pipelineInfo.idInst))        {
+        if (!stall && !dataFetchMiss && !instFetchMiss && isBranchOrJump(pipelineInfo.idInst))
+        {
+
+            branchInId = true;
+            // simulator->simNextPCResolution(prevIDInst);
             if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4)
             {
                 taken = true;
             }
-        }
-
-        if (!instFetchMiss && !dataFetchMiss && !iCache->access(PC, CACHE_READ))
-        {
-            std::cout << "[DEBUG] Cache Miss, Cycle: " << cycleCount << std::endl;
-            std::cout << "[DEBUG] Cache Miss, PC: " << PC << std::endl;
-            instFetchMiss = true;
-            instMissStalls = 0;
-        }
-        else if (instFetchMiss) {
-            instMissStalls += 1;
         }
 
         std::cout << "[DEBUG] Fetch Stage, Cycle: " << cycleCount << std::endl;
@@ -421,6 +446,8 @@ Status runCycles(uint64_t cycles)
         {
             std::cout << "[DEBUG] Illegal Exception, Cycle: " << cycleCount << std::endl;
             pipelineInfo.ifInst.status = SQUASHED;
+            instFetchMiss = false;
+            instMissStalls = 0;
             PC = EXC_HANDLER;
         }
 
@@ -430,6 +457,9 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.ifInst.status = SQUASHED;
             pipelineInfo.idInst.status = SQUASHED;
             pipelineInfo.exInst.status = SQUASHED;
+
+            instFetchMiss = false;
+            instMissStalls = 0;
             PC = EXC_HANDLER;
         }
 
@@ -441,32 +471,40 @@ Status runCycles(uint64_t cycles)
 
             pipelineInfo.ifInst = prevIFInst;
 
-            if (isBranchOrJump(spec_decode))
+            if (isBranchOrJump(pipelineInfo.idInst))
             {
                 pipelineInfo.ifInst.status = SPECULATIVE;
             }
         }
 
-        else if (taken)
+        else if (branchInId)
         {
-
-            // Angel debuggin
-            std::cout << "[DEBUG] Branch taken → PC = 0x"
-                      << std::hex << pipelineInfo.idInst.nextPC
-                      << std::dec << std::endl;
-
-            prevIFInst.status = SQUASHED;
-            pipelineInfo.ifInst = prevIFInst;
-            PC = pipelineInfo.idInst.nextPC;
-        }
-        else if (instFetchMiss) {
+            std::cout << "[DEBUG] Fetch Cache Access, Cycle: " << cycleCount << std::endl;
             pipelineInfo.ifInst = simulator->simIF(PC);
-            std::cout << "[DEBUG] IF InstFetchMiss, PC: " << PC << std::endl;
+            pipelineInfo.ifInst.status = SPECULATIVE;
+            if (taken)
+            {
+                std::cout << "[DEBUG] Branch taken → PC = 0x"
+                          << std::hex << pipelineInfo.idInst.nextPC
+                          << std::dec << std::endl;
+                PC = pipelineInfo.idInst.nextPC;
+                instFetchMiss = false;
+                instMissStalls = 0;
+            }
+            else
+            {
+                PC += 4;
+            }
+        }
+        else if (instFetchMiss)
+        {
+            std::cout << "[DEBUG] IF InstFetchMiss, PC: " << prevIFInst.PC << std::endl;
+            pipelineInfo.ifInst = prevIFInst;
         }
         else if (dataFetchMiss)
         {
-            pipelineInfo.ifInst = prevIFInst;
             std::cout << "[DEBUG] IF Stall, Cycle: " << cycleCount << std::endl;
+            pipelineInfo.ifInst = prevIFInst;
         }
         else
         {
@@ -482,17 +520,16 @@ Status runCycles(uint64_t cycles)
             }
         }
 
-        if (instMissStalls >= iCache->config.missLatency)
-            {
-                instMissStalls = 0;
-                instFetchMiss = false;
-                PC += 4;
-            }
-        if (dataMissStalls >= dCache->config.missLatency)
-            {
-                dataMissStalls = 0;
-                dataFetchMiss = false;
-            }
+        if (instMissStalls >= iCache->config.missLatency - 1)
+        {
+            instMissStalls = 0;
+            instFetchMiss = false;
+        }
+        if (dataMissStalls >= dCache->config.missLatency - 1)
+        {
+            dataMissStalls = 0;
+            dataFetchMiss = false;
+        }
 
         count++;
         cycleCount++;
@@ -528,8 +565,8 @@ Status runCycles(uint64_t cycles)
 Status runTillHalt()
 {
     Status status;
+    // for (int i = 0; i < 50; i++)
     while (true)
-    // for (int i = 0; i < 15; i++)
     {
         status = static_cast<Status>(runCycles(1));
         if (status == HALT)
