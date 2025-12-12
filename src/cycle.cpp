@@ -276,7 +276,7 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.wbInst.status != SQUASHED &&
             !pipelineInfo.wbInst.isHalt)
         {
-            retiredCount++;
+            completedCount++;
         }
 
         // Foward WB -> MEM
