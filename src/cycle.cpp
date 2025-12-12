@@ -18,7 +18,7 @@ static uint64_t loadStallCount = 0;
 // completed instruction count
 static uint64_t completedCount = 0;
 // last instruction cache PC
-static uint64_t prevICPC = (uint16_t)-1;
+static uint64_t prevICPC = (uint64_t)-1;
 // remaining stall cycles
 static uint64_t remainingStallCycles = 0;
 // previous data valid flag
@@ -153,7 +153,6 @@ Status runCycles(uint64_t cycles)
             opType = CACHE_WRITE;
         }
 
-        CacheOperation operationType = CACHE_READ;
         if (prevMEMInst.writesMem) opType = CACHE_WRITE;
 
         if (!dataFetchMiss && (isLoad(prevMEMInst) || isStore(prevMEMInst)))
