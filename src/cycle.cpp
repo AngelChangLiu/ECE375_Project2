@@ -120,6 +120,22 @@ Status runCycles(uint64_t cycles)
         bool illegalExc = false;
         bool memExc = false;
 
+        if (!prevIDInst.isLegal && !prevIDInst.isNop &&
+            prevIDInst.status != BUBBLE &&
+            prevIDInst.status != SQUASHED &&
+            !prevIDInst.isHalt)
+        {
+            std::cout << "[DEBUG] illegalexc: " << cycleCount << std::endl;
+            illegalExc = true;
+        }
+
+        // if (prevIDInst.isLegal && !prevIDInst.isNop &&
+        //     prevIDInst.status != BUBBLE &&
+        //     prevIDInst.status != SQUASHED &&
+        //     prevIDInst.isHalt) {
+        //         std::cout << "[DEBUG] HALT: " << cycleCount << std::endl;
+        //     }
+
         CacheOperation operationType = CACHE_READ;
         if (prevMEMInst.writesMem)
         {
@@ -252,24 +268,6 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
         }
 
-        // Halt check
-        if (pipelineInfo.wbInst.isHalt)
-        {
-            pipeState.ifPC = pipelineInfo.ifInst.PC;
-            pipeState.ifStatus = pipelineInfo.ifInst.status;
-            pipeState.idInstr = pipelineInfo.idInst.instruction;
-            pipeState.idStatus = pipelineInfo.idInst.status;
-            pipeState.exInstr = pipelineInfo.exInst.instruction;
-            pipeState.exStatus = pipelineInfo.exInst.status;
-            pipeState.memInstr = pipelineInfo.memInst.instruction;
-            pipeState.memStatus = pipelineInfo.memInst.status;
-            pipeState.wbInstr = pipelineInfo.wbInst.instruction;
-            pipeState.wbStatus = pipelineInfo.wbInst.status;
-            dumpPipeState(pipeState, output);
-            status = HALT;
-            break;
-        }
-
         // Foward WB -> MEM
         if (isStore(prevEXInst) && writesREG(prevMEMInst) && !dataFetchMiss)
         {
@@ -345,24 +343,29 @@ Status runCycles(uint64_t cycles)
             }
         }
 
-        // // Forward from EX → ID
-        // if (writesREG(prevEXInst) && isBranchOrJump(prevIDInst))
-        // {
-        //     uint64_t exRd = prevEXInst.rd;
-        //     // if the prev ID is a branch and the mem instruction reads or writes to a reg that the branch needs, forward it to ID 
-        //     if (prevIDInst.readsRs1 && prevIDInst.rs1 == exRd && exRd != 0)
-        //     {
-        //         prevIDInst.op1Val = prevEXInst.arithResult;
-        //     }
-        //     if (prevIDInst.readsRs2 && prevIDInst.rs2 == exRd && exRd != 0)
-        //     {
-        //         prevIDInst.op2Val = prevEXInst.arithResult;
-        //     }
-        // }
+        // Forward from EX → ID
+        if (writesREG(prevEXInst) && isBranchOrJump(prevIDInst))
+        {
+            uint64_t exRd = prevEXInst.rd;
+            // if the prev ID is a branch and the mem instruction reads or writes to a reg that the branch needs, forward it to ID
+            if (prevIDInst.readsRs1 && prevIDInst.rs1 == exRd && exRd != 0)
+            {
+                prevIDInst.op1Val = prevEXInst.arithResult;
+            }
+            if (prevIDInst.readsRs2 && prevIDInst.rs2 == exRd && exRd != 0)
+            {
+                prevIDInst.op2Val = prevEXInst.arithResult;
+            }
+        }
 
         std::cout << "[DEBUG] Execute Stage, Cycle: " << cycleCount << std::endl;
         // EX Stage:
-        if (dataFetchMiss)
+        if (illegalExc)
+        {
+            std::cout << "[DEBUG] IllegalExc (EX): " << cycleCount << std::endl;
+            pipelineInfo.exInst = nop(SQUASHED);
+        }
+        else if (dataFetchMiss)
         {
             pipelineInfo.exInst = prevEXInst;
         }
@@ -382,7 +385,12 @@ Status runCycles(uint64_t cycles)
 
         std::cout << "[DEBUG] Decode Stage, Cycle: " << cycleCount << std::endl;
         // ID Stage:
-        if (dataFetchMiss)
+        if (illegalExc)
+        {
+            std::cout << "[DEBUG] Illegal Exc: " << illegalExc << std::endl;
+            pipelineInfo.idInst = nop(SQUASHED);
+        }
+        else if (dataFetchMiss)
         {
             std::cout << "[DEBUG] dataFetchMiss: " << dataFetchMiss << std::endl;
             pipelineInfo.idInst = prevIDInst;
@@ -390,8 +398,9 @@ Status runCycles(uint64_t cycles)
         else if (stall)
         {
             std::cout << "[DEBUG] Stall: " << stall << std::endl;
-            if (isBranchOrJump(prevIDInst)) {
-                pipelineInfo.idInst = simulator->simID(prevIDInst);
+            if (isBranchOrJump(prevIDInst))
+            {
+                pipelineInfo.idInst = simulator->simNextPCResolution(prevIDInst);
             }
             else
             {
@@ -417,26 +426,20 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.idInst = simulator->simID(prevIFInst);
         }
 
-        if (!pipelineInfo.idInst.isLegal && !pipelineInfo.idInst.isNop &&
-            pipelineInfo.idInst.status != BUBBLE &&
-            pipelineInfo.idInst.status != SQUASHED &&
-            !pipelineInfo.idInst.isHalt)
-        {
-            illegalExc = true;
-            pipelineInfo.idInst.status = SQUASHED;
-        }
-
         // Check for Branch
         bool branchInId = false;
         bool taken = false;
-        if (!stall && !dataFetchMiss && !instFetchMiss && isBranchOrJump(pipelineInfo.idInst))
+        // REMOVED PART '!stall &&' from conditional below:
+        // Determine whether other conditionals beside isBranchOrJump are needed.
+        if (!dataFetchMiss && !instFetchMiss && isBranchOrJump(pipelineInfo.idInst))
         {
-
+            std::cout << "[DEBUG] Branch Resolution, Cycle: " << cycleCount << std::endl;
             branchInId = true;
             // simulator->simNextPCResolution(prevIDInst);
             if (pipelineInfo.idInst.nextPC != pipelineInfo.idInst.PC + 4)
             {
                 taken = true;
+                std::cout << "[DEBUG] Branch Taken? " << taken << std::endl;
             }
         }
 
@@ -444,11 +447,11 @@ Status runCycles(uint64_t cycles)
         // Instruction Fetch Stage
         if (illegalExc)
         {
-            std::cout << "[DEBUG] Illegal Exception, Cycle: " << cycleCount << std::endl;
-            pipelineInfo.ifInst.status = SQUASHED;
+            std::cout << "[DEBUG] Illegal Exception (IF): " << cycleCount << std::endl;
             instFetchMiss = false;
             instMissStalls = 0;
             PC = EXC_HANDLER;
+            pipelineInfo.ifInst = simulator->simIF(PC);
         }
 
         else if (memExc)
@@ -471,9 +474,28 @@ Status runCycles(uint64_t cycles)
 
             pipelineInfo.ifInst = prevIFInst;
 
-            if (isBranchOrJump(pipelineInfo.idInst))
+            // if (isBranchOrJump(pipelineInfo.idInst))
+            // {
+            //     pipelineInfo.ifInst.status = SPECULATIVE;
+            // }
+
+            if (branchInId)
             {
-                pipelineInfo.ifInst.status = SPECULATIVE;
+                std::cout << "[DEBUG] Re-Resolve Branch: " << cycleCount << std::endl;
+                PC = pipelineInfo.idInst.nextPC;
+                if (taken)
+                {
+                    std::cout << "[DEBUG] Branch taken → PC = 0x"
+                              << std::hex << pipelineInfo.idInst.nextPC
+                              << std::dec << std::endl;
+
+                    instFetchMiss = false;
+                    instMissStalls = 0;
+                }
+                else
+                {
+                    PC += 4;
+                }
             }
         }
 
@@ -482,18 +504,15 @@ Status runCycles(uint64_t cycles)
             std::cout << "[DEBUG] Fetch Cache Access, Cycle: " << cycleCount << std::endl;
             pipelineInfo.ifInst = simulator->simIF(PC);
             pipelineInfo.ifInst.status = SPECULATIVE;
+            PC = pipelineInfo.idInst.nextPC;
             if (taken)
             {
                 std::cout << "[DEBUG] Branch taken → PC = 0x"
                           << std::hex << pipelineInfo.idInst.nextPC
                           << std::dec << std::endl;
-                PC = pipelineInfo.idInst.nextPC;
+
                 instFetchMiss = false;
                 instMissStalls = 0;
-            }
-            else
-            {
-                PC += 4;
             }
         }
         else if (instFetchMiss)
@@ -533,6 +552,24 @@ Status runCycles(uint64_t cycles)
 
         count++;
         cycleCount++;
+
+        // Halt check
+        if (pipelineInfo.wbInst.isHalt)
+        {
+            pipeState.ifPC = pipelineInfo.ifInst.PC;
+            pipeState.ifStatus = pipelineInfo.ifInst.status;
+            pipeState.idInstr = pipelineInfo.idInst.instruction;
+            pipeState.idStatus = pipelineInfo.idInst.status;
+            pipeState.exInstr = pipelineInfo.exInst.instruction;
+            pipeState.exStatus = pipelineInfo.exInst.status;
+            pipeState.memInstr = pipelineInfo.memInst.instruction;
+            pipeState.memStatus = pipelineInfo.memInst.status;
+            pipeState.wbInstr = pipelineInfo.wbInst.instruction;
+            pipeState.wbStatus = pipelineInfo.wbInst.status;
+            dumpPipeState(pipeState, output);
+            status = HALT;
+            break;
+        }
     }
 
     // Dump Cache Status:

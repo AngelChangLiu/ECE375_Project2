@@ -38,11 +38,11 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
 
     uint64_t index = (address >> offset_bits) & ((0x1 << index_bits) - 1);
     uint64_t tag = (address >> (offset_bits + index_bits));
-    if (address == 0x20) {
-        std::cout << "[DEBUG] addr: " << address << std::endl;
-        std::cout << "[DEBUG] tag: " << tag << std::endl;
-        std::cout << "[DEBUG] index: " << index << std::endl;
-    }
+    // if (address == 0x20) {
+    //     std::cout << "[DEBUG] addr: " << address << std::endl;
+    //     std::cout << "[DEBUG] tag: " << tag << std::endl;
+    //     std::cout << "[DEBUG] index: " << index << std::endl;
+    // }
 
 
     // search through set for block that contains tag from address
@@ -57,9 +57,9 @@ bool Cache::access(uint64_t address, CacheOperation readWrite)
             hit = true;
             hitIndex = i;
             oldLRU = currBlock.lru;
-            if (address == 0x20) {
-                std::cout << "[DEBUG] hit: " << address << std::endl;
-            }
+            // if (address == 0x20) {
+            //     std::cout << "[DEBUG] hit: " << address << std::endl;
+            // }
             break;
         }
     }
