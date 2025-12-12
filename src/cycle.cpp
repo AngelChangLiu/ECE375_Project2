@@ -270,8 +270,10 @@ Status runCycles(uint64_t cycles)
             pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
         }
 
-        if (!pipelineInfo.wbInst.isNop && pipelineInfo.wbInst.isLegalpipelineInfo.wbInst.status 
-            != BUBBLE && pipelineInfo.wbInst.status != SQUASHED && !pipelineInfo.wbInst.isHalt) {
+        if (!pipelineInfo.wbInst.isNop && 
+            pipelineInfo.wbInst.isLegalpipelineInfo.wbInst.status != BUBBLE &&
+            pipelineInfo.wbInst.status != SQUASHED && 
+            !pipelineInfo.wbInst.isHalt) {
                  completedCount++;
             }
 
