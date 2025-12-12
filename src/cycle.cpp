@@ -15,6 +15,8 @@ static std::string output;
 static uint64_t cycleCount = 0;
 // count of load-use stalls
 static uint64_t loadStallCount = 0;
+// completed instruction count
+static uint64_t completedCount = 0;
 // remaining stall cycles
 static uint64_t remainingStallCycles = 0;
 static uint64_t PC = 0;
@@ -267,6 +269,11 @@ Status runCycles(uint64_t cycles)
         {
             pipelineInfo.wbInst = simulator->simWB(prevMEMInst);
         }
+
+        if (!pipelineInfo.wbInst.isNop && pipelineInfo.wbInst.isLegalpipelineInfo.wbInst.status 
+            != BUBBLE && pipelineInfo.wbInst.status != SQUASHED && !pipelineInfo.wbInst.isHalt) {
+                 completedCount++;
+            }
 
         // Foward WB -> MEM
         if (isStore(prevEXInst) && writesREG(prevMEMInst) && !dataFetchMiss)
@@ -617,7 +624,7 @@ Status finalizeSimulator()
 {
     simulator->dumpRegMem(output);
     SimulationStats stats{
-        simulator->getDin(),
+        completedCount,
         cycleCount,
         iCache->getHits(),
         iCache->getMisses(),
