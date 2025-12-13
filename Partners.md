@@ -3,7 +3,7 @@
 ### Group (work in groups of 2, 3, or 4 people, adjust the number of lines as needed)
 
 - Aditya Prajapati - ap4801: ap4801@princeton.edu
-- Angel Chang - 
+- Angel Chang - ac7237: ac7237@princeton.edu
 - Janardhan Raghunathan - jr7957: jr7957@princeton.edu
 - Pratham Longia - pl7682: pl7682@princeton.edu
 
