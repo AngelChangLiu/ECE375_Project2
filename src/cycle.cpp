@@ -176,6 +176,7 @@ Status runCycles(uint64_t cycles)
             dataMissStalls += 1;
         }
 
+        
         if (remainingStallCycles > 0)
         {
             stall = true;
