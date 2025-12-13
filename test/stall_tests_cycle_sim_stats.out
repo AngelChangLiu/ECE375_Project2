@@ -1,0 +1,7 @@
+Dynamic instructions:  21
+Total cycles:          62
+I-cache hits:          17
+I-cache misses:        7
+D-cache hits:          6
+D-cache misses:        1
+Load-use stalls:       2

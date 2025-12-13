@@ -407,7 +407,8 @@ Simulator::Instruction Simulator::simMemAccess(Instruction inst, MemoryStore *my
 
     if (inst.readsMem) {
         uint64_t value;
-        myMem->getMemValue(inst.memAddress, value, size);
+        inst.memException = myMem->getMemValue(inst.memAddress, value, size) == EINVAL;
+
         
         if (inst.funct3 == FUNCT3_B || inst.funct3 == FUNCT3_H || inst.funct3 == FUNCT3_W) {
             inst.memResult = sext64(value, size * 8 - 1);

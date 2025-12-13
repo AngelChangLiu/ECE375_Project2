@@ -1,0 +1,11 @@
+Cycle:        0	|| Inst at 0x0             | NOP (idle)              | NOP (idle)              | NOP (idle)              | NOP (idle)              |
+Cycle:        1	|| Inst at 0x0             | NOP (bubble)            | NOP (idle)              | NOP (idle)              | NOP (idle)              |
+Cycle:        2	|| Inst at 0x0             | NOP (bubble)            | NOP (bubble)            | NOP (idle)              | NOP (idle)              |
+Cycle:        3	|| Inst at 0x0             | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            | NOP (idle)              |
+Cycle:        4	|| Inst at 0x0             | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            |
+Cycle:        5	|| Inst at 0x0             | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            |
+Cycle:        6	|| Inst at 0x4             | NOP                     | NOP (bubble)            | NOP (bubble)            | NOP (bubble)            |
+Cycle:        7	|| Inst at 0x8             | HALT                    | NOP                     | NOP (bubble)            | NOP (bubble)            |
+Cycle:        8	|| Inst at 0xc             | ILLEGAL                 | HALT                    | NOP                     | NOP (bubble)            |
+Cycle:        9	|| Inst at 0x8000          | NOP (squashed)          | NOP (squashed)          | HALT                    | NOP                     |
+Cycle:       10	|| Inst at 0x8000          | NOP (bubble)            | NOP (squashed)          | NOP (squashed)          | HALT                    |

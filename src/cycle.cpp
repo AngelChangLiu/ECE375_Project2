@@ -33,7 +33,7 @@ static uint64_t PC = 0;
 #define EXC_HANDLER 0x8000
 
 /*
-*TODO: Implement pipeline simulation for the RISCV machine in this file.
+ *TODO: Implement pipeline simulation for the RISCV machine in this file.
  * A basic template is provided below that doesn't account for any hazards.
  */
 
@@ -153,16 +153,17 @@ Status runCycles(uint64_t cycles)
             opType = CACHE_WRITE;
         }
 
-        if (prevMEMInst.writesMem) opType = CACHE_WRITE;
+        if (prevMEMInst.writesMem)
+            opType = CACHE_WRITE;
 
         if (!dataFetchMiss && (isLoad(prevMEMInst) || isStore(prevMEMInst)))
         {
-            // only access dCache if the address or operation type has changed in MEM instr 
+            // only access dCache if the address or operation type has changed in MEM instr
             if (!prevDValid || prevMEMInst.memAddress != prevDAddr || opType != prevDOp)
             {
                 prevDValid = true;
-                prevDAddr  = prevMEMInst.memAddress;
-                prevDOp    = opType;
+                prevDAddr = prevMEMInst.memAddress;
+                prevDOp = opType;
 
                 if (!dCache->access(prevMEMInst.memAddress, opType))
                 {
@@ -278,7 +279,7 @@ Status runCycles(uint64_t cycles)
 
                 if (!iCache->access(prevIFInst.PC, CACHE_READ))
                 {
-                
+
                     std::cout << "[DEBUG] Instruction Cache Miss, Cycle: " << cycleCount << std::endl;
                     std::cout << "[DEBUG] Instruction Cache Miss, PC: " << prevIFInst.PC << std::endl;
 
@@ -403,14 +404,14 @@ Status runCycles(uint64_t cycles)
 
         std::cout << "[DEBUG] Execute Stage, Cycle: " << cycleCount << std::endl;
         // EX Stage:
-        if (illegalExc)
+        if (dataFetchMiss)
+        {
+            pipelineInfo.exInst = prevEXInst;
+        }
+        else if (illegalExc)
         {
             std::cout << "[DEBUG] IllegalExc (EX): " << cycleCount << std::endl;
             pipelineInfo.exInst = nop(SQUASHED);
-        }
-        else if (dataFetchMiss)
-        {
-            pipelineInfo.exInst = prevEXInst;
         }
         else if (stall)
         {
@@ -428,15 +429,15 @@ Status runCycles(uint64_t cycles)
 
         std::cout << "[DEBUG] Decode Stage, Cycle: " << cycleCount << std::endl;
         // ID Stage:
-        if (illegalExc)
-        {
-            std::cout << "[DEBUG] Illegal Exc: " << illegalExc << std::endl;
-            pipelineInfo.idInst = nop(SQUASHED);
-        }
-        else if (dataFetchMiss)
+        if (dataFetchMiss)
         {
             std::cout << "[DEBUG] dataFetchMiss: " << dataFetchMiss << std::endl;
             pipelineInfo.idInst = prevIDInst;
+        }
+        else if (illegalExc)
+        {
+            std::cout << "[DEBUG] Illegal Exc: " << illegalExc << std::endl;
+            pipelineInfo.idInst = nop(SQUASHED);
         }
         else if (stall)
         {
@@ -507,6 +508,7 @@ Status runCycles(uint64_t cycles)
             instFetchMiss = false;
             instMissStalls = 0;
             PC = EXC_HANDLER;
+            pipelineInfo.ifInst = simulator->simIF(PC);
         }
 
         else if (stall)
@@ -645,7 +647,7 @@ Status runCycles(uint64_t cycles)
 Status runTillHalt()
 {
     Status status;
-    // for (int i = 0; i < 50; i++)
+    // for (int i = 0; i < 170; i++)
     while (true)
     {
         status = static_cast<Status>(runCycles(1));
