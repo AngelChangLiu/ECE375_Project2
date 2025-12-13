@@ -1,4 +1,4 @@
-    .section .text
+.section .text
     .globl _start
 
 ##################################################
@@ -25,14 +25,14 @@ _start:
     ##################################################
     # Filler (never reached)
     ##################################################
-    addi t7, x0, 7
-    addi t7, x0, 8
-    addi t7, x0, 9
+    addi t6, x0, 7
+    addi t6, x0, 8
+    addi t6, x0, 9
 
-    ##################################################
-    # Exception handler at 0x8000
-    ##################################################
+##################################################
+# Exception handler at 0x8000
+##################################################
     .org 0x8000
 exception_handler:
-    addi a0, x0, 42       # IX (clearly visible)
+    addi a0, x0, 42       # IX (exception handler instruction)
     .word 0xfeedfeed
